@@ -17,7 +17,7 @@ namespace Infrastructure.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder dbContextOptionsBuilder)
         {
-            dbContextOptionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("SqlServer"));
+            dbContextOptionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("SqlServer"));//
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
