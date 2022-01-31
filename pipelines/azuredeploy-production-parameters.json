@@ -1,0 +1,18 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "sites_vitality_web_app_name": {
+      "value": "vitality-web-app-production"
+    },
+    "components_vitality_web_app_name": {
+      "value": "vitality-web-app-production"
+    },
+    "serverfarms_vitalityapp_resourcegroup_ASP_name": {
+      "value": "vitalityapp-resourcegroup-ASP-production"
+    },
+    "workspaces_defaultworkspace_dbd6c6e0_4e54_4670_ad43_7d88e202a49d_weu_externalid": {
+      "value": "/subscriptions/dbd6c6e0-4e54-4670-ad43-7d88e202a49d/resourceGroups/defaultresourcegroup-weu/providers/microsoft.operationalinsights/workspaces/defaultworkspace-dbd6c6e0-4e54-4670-ad43-7d88e202a49d-weu"
+    }
+  }
+}

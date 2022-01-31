@@ -1,0 +1,215 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"sites_vitality_web_app_name": {
+			"defaultValue": "vitality-web-app",
+			"type": "String"
+		},
+		"components_vitality_web_app_name": {
+			"defaultValue": "vitality-web-app",
+			"type": "String"
+		},
+		"serverfarms_vitalityapp_resourcegroup_ASP_name": {
+			"defaultValue": "vitalityapp-resourcegroup-ASP",
+			"type": "String"
+		},
+		"workspaces_defaultworkspace_dbd6c6e0_4e54_4670_ad43_7d88e202a49d_weu_externalid": {
+			"defaultValue": "/subscriptions/dbd6c6e0-4e54-4670-ad43-7d88e202a49d/resourceGroups/defaultresourcegroup-weu/providers/microsoft.operationalinsights/workspaces/defaultworkspace-dbd6c6e0-4e54-4670-ad43-7d88e202a49d-weu",
+			"type": "String"
+		}
+	},
+	"variables": {},
+	"resources": [
+		{
+			"type": "Microsoft.Web/serverfarms",
+			"apiVersion": "2021-01-15",
+			"name": "[parameters('serverfarms_vitalityapp_resourcegroup_ASP_name')]",
+			"location": "West Europe",
+			"sku": {
+				"name": "F1",
+				"tier": "Free",
+				"size": "F1",
+				"family": "F",
+				"capacity": 0
+			},
+			"kind": "app",
+			"properties": {
+				"perSiteScaling": false,
+				"elasticScaleEnabled": false,
+				"maximumElasticWorkerCount": 1,
+				"isSpot": false,
+				"reserved": false,
+				"isXenon": false,
+				"hyperV": false,
+				"targetWorkerCount": 0,
+				"targetWorkerSizeId": 0
+			}
+		},
+		{
+			"type": "Microsoft.Web/sites",
+			"apiVersion": "2021-01-15",
+			"name": "[parameters('sites_vitality_web_app_name')]",
+			"location": "West Europe",
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_vitalityapp_resourcegroup_ASP_name'))]"
+			],
+			"kind": "app",
+			"properties": {
+				"enabled": true,
+				"hostNameSslStates": [
+					{
+						"name": "[concat(parameters('sites_vitality_web_app_name'), '.azurewebsites.net')]",
+						"sslState": "Disabled",
+						"hostType": "Standard"
+					},
+					{
+						"name": "[concat(parameters('sites_vitality_web_app_name'), '.scm.azurewebsites.net')]",
+						"sslState": "Disabled",
+						"hostType": "Repository"
+					}
+				],
+				"serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_vitalityapp_resourcegroup_ASP_name'))]",
+				"reserved": false,
+				"isXenon": false,
+				"hyperV": false,
+				"siteConfig": {
+					"numberOfWorkers": 1,
+					"acrUseManagedIdentityCreds": false,
+					"alwaysOn": false,
+					"http20Enabled": false,
+					"functionAppScaleLimit": 0,
+					"minimumElasticInstanceCount": 0
+				},
+				"scmSiteAlsoStopped": false,
+				"clientAffinityEnabled": true,
+				"clientCertEnabled": false,
+				"clientCertMode": "Required",
+				"hostNamesDisabled": false,
+				"customDomainVerificationId": "1BF246DA0D5509B6D572B41AE1DD891DEF73133B2FAF906E3F76D28EB3058E12",
+				"containerSize": 0,
+				"dailyMemoryTimeQuota": 0,
+				"keyVaultReferenceIdentity": "SystemAssigned",
+				"httpsOnly": false,
+				"redundancyMode": "None",
+				"storageAccountRequired": false
+			}
+		},
+		{
+			"type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+			"apiVersion": "2021-01-15",
+			"name": "[concat(parameters('sites_vitality_web_app_name'), '/ftp')]",
+			"location": "West Europe",
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/sites', parameters('sites_vitality_web_app_name'))]"
+			],
+			"properties": {
+				"allow": true
+			}
+		},
+		{
+			"type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+			"apiVersion": "2021-01-15",
+			"name": "[concat(parameters('sites_vitality_web_app_name'), '/scm')]",
+			"location": "West Europe",
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/sites', parameters('sites_vitality_web_app_name'))]"
+			],
+			"properties": {
+				"allow": true
+			}
+		},
+		{
+			"type": "Microsoft.Web/sites/config",
+			"apiVersion": "2021-01-15",
+			"name": "[concat(parameters('sites_vitality_web_app_name'), '/web')]",
+			"location": "West Europe",
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/sites', parameters('sites_vitality_web_app_name'))]"
+			],
+			"properties": {
+				"numberOfWorkers": 1,
+				"defaultDocuments": [
+					"Default.htm",
+					"Default.html",
+					"Default.asp",
+					"index.htm",
+					"index.html",
+					"iisstart.htm",
+					"default.aspx",
+					"index.php",
+					"hostingstart.html"
+				],
+				"netFrameworkVersion": "v5.0",
+				"requestTracingEnabled": false,
+				"remoteDebuggingEnabled": false,
+				"httpLoggingEnabled": false,
+				"acrUseManagedIdentityCreds": false,
+				"logsDirectorySizeLimit": 35,
+				"detailedErrorLoggingEnabled": false,
+				"publishingUsername": "$vitality-web-app",
+				"azureStorageAccounts": {},
+				"scmType": "None",
+				"use32BitWorkerProcess": true,
+				"webSocketsEnabled": false,
+				"alwaysOn": false,
+				"managedPipelineMode": "Integrated",
+				"virtualApplications": [
+					{
+						"virtualPath": "/",
+						"physicalPath": "site\\wwwroot",
+						"preloadEnabled": false
+					}
+				],
+				"loadBalancing": "LeastRequests",
+				"experiments": {
+					"rampUpRules": []
+				},
+				"autoHealEnabled": false,
+				"vnetRouteAllEnabled": false,
+				"vnetPrivatePortsCount": 0,
+				"localMySqlEnabled": false,
+				"ipSecurityRestrictions": [
+					{
+						"ipAddress": "Any",
+						"action": "Allow",
+						"priority": 1,
+						"name": "Allow all",
+						"description": "Allow all access"
+					}
+				],
+				"scmIpSecurityRestrictions": [
+					{
+						"ipAddress": "Any",
+						"action": "Allow",
+						"priority": 1,
+						"name": "Allow all",
+						"description": "Allow all access"
+					}
+				],
+				"scmIpSecurityRestrictionsUseMain": false,
+				"http20Enabled": false,
+				"minTlsVersion": "1.2",
+				"scmMinTlsVersion": "1.0",
+				"ftpsState": "AllAllowed",
+				"preWarmedInstanceCount": 0,
+				"functionAppScaleLimit": 0,
+				"functionsRuntimeScaleMonitoringEnabled": false,
+				"minimumElasticInstanceCount": 0
+			}
+		},
+		{
+			"type": "Microsoft.Web/sites/hostNameBindings",
+			"apiVersion": "2021-01-15",
+			"name": "[concat(parameters('sites_vitality_web_app_name'), '/', parameters('sites_vitality_web_app_name'), '.azurewebsites.net')]",
+			"location": "West Europe",
+			"dependsOn": [
+				"[resourceId('Microsoft.Web/sites', parameters('sites_vitality_web_app_name'))]"
+			],
+			"properties": {
+				"siteName": "vitality-web-app",
+				"hostNameType": "Verified"
+			}
+		}
+	]
+}
