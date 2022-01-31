@@ -100,11 +100,11 @@ namespace VitalityFunctionsApp.Controllers
             string requestbody = await new StreamReader(req.Body).ReadToEndAsync();
             UserRegisterRequest user = JsonConvert.DeserializeObject<UserRegisterRequest>(requestbody);
 
-            if (!await ValidationService.ValidateEmployeeEmail(user.Email) || !await ValidationService.ValidatePassword(user.Password))
-            {
-                HttpResponseData badResponse = req.CreateResponse(HttpStatusCode.BadRequest);
-                return badResponse;
-            }
+            //if (!await ValidationService.ValidateEmployeeEmail(user.Email) || !await ValidationService.ValidatePassword(user.Password))
+            //{
+            //    HttpResponseData badResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+            //    return badResponse;
+            //}
 
             try
             {
