@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Migrations
 {
-    public partial class initial : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,14 +12,14 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     ChallengeId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Title = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
                     ChallengeType = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ImageLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    VideoLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    ImageLink = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    VideoLink = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Location = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Points = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -32,9 +32,9 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     CommentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    TimelinePostId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Text = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TimelinePostId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    Text = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -47,8 +47,8 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     LikeId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    TimelinePostId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    TimelinePostId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -60,12 +60,12 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     NotificationId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ToUser = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    ToUser = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     NotificationType = table.Column<int>(type: "int", nullable: false),
                     TimeOfNotification = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TimelinePostId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ChallengeId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    TimelinePostId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    ChallengeId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -77,7 +77,7 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     PushTokenId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     DeviceType = table.Column<int>(type: "int", nullable: false),
                     NotificationEnabled = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -91,11 +91,11 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     TimelinePostId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     PublishDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Text = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Video = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Text = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Image = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Video = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -109,15 +109,15 @@ namespace Infrastructure.Migrations
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Firstname = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     Lastname = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
-                    JobTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: true),
-                    ProfilePicture = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    JobTitle = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Location = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
+                    ProfilePicture = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     IsVerified = table.Column<bool>(type: "bit", nullable: false),
                     HasAdminPriviledges = table.Column<bool>(type: "bit", nullable: false),
                     Points = table.Column<int>(type: "int", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -129,7 +129,7 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     FollowerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserFollowerId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserFollowerId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
@@ -148,7 +148,7 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     SubscribedChallengeId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ChallengeId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ChallengeId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
                     ChallengeProgress = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
