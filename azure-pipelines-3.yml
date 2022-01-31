@@ -8,7 +8,7 @@ trigger:
 
 variables:
   # Azure Resource Manager connection created during pipeline creation
-  azureSubscription: 'd91f7532-2765-4d8d-9de5-c0428f2d3a4f'
+  azureSubscription: '0cb3d371-2f44-4c4d-9ac7-34380fa885ba'
 
   # Function app name
   functionAppName: 'VitalityQueue-prd'

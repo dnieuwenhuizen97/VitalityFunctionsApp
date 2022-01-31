@@ -8,7 +8,7 @@ trigger:
 
 variables:
   # Azure Resource Manager connection created during pipeline creation
-  azureSubscription: 'ebc9bd43-2680-4c51-9288-685be3299cb3'
+  azureSubscription: '81e48097-233e-46eb-811c-5e9d69f5111f'
 
   # Function app name
   functionAppName: 'VitalityQueue-tst'
@@ -42,7 +42,7 @@ stages:
       inputs:
         command: 'test'
         projects: '**/UnitTests/*.csproj'
-
+    
     - task: ArchiveFiles@2
       displayName: 'Archive files'
       inputs:
