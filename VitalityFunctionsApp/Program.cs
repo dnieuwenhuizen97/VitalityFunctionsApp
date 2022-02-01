@@ -1,6 +1,7 @@
 using Infrastructure.Context;
 using Infrastructure.Context.Interfaces;
 using Infrastructure.StorageAccount;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Extensions.OpenApi;
 using Microsoft.Azure.Functions.Worker.Extensions.OpenApi.Extensions;
 using Microsoft.Azure.Functions.Worker.Extensions.OpenApi.Functions;
@@ -20,7 +21,11 @@ namespace VitalityFunctionsApp
 		public static void Main()
 		{
 			IHost host = new HostBuilder()
-				.ConfigureFunctionsWorkerDefaults(worker => worker.UseNewtonsoftJson().UseMiddleware<JwtMiddleware>())
+				.ConfigureFunctionsWorkerDefaults((IFunctionsWorkerApplicationBuilder builder) =>
+				{
+					builder.UseNewtonsoftJson().UseMiddleware<JwtMiddleware>();
+				})
+				.ConfigureOpenApi()
 				.ConfigureServices(Configure)
 				.Build();
 
