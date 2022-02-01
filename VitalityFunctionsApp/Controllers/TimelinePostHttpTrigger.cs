@@ -1,5 +1,6 @@
 ﻿using Domains;
 using Domains.DTO;
+using Domains.Enums;
 using HttpMultipartParser;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Azure.Functions.Worker;
@@ -51,7 +52,7 @@ namespace VitalityFunctionsApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> CreatePost([HttpTrigger(AuthorizationLevel.Anonymous, "POST", Route = "timelinepost")] HttpRequestData req, FunctionContext executionContext)
         {
-            return await _requestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await _requestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
                 var timelinePost = new TimelinePostDTO();
@@ -64,7 +65,7 @@ namespace VitalityFunctionsApp.Controllers
 
                 // Retrieve the "Text" from request
                 List<ParametersKeys> parametersKeysDTO = parameters.Select(x => new ParametersKeys { Data = x.Data, Text = x.Name }).ToList();
-                var text = parametersKeysDTO.FirstOrDefault(x => x.Text == "Text");
+                var text = parametersKeysDTO.FirstOrDefault(x => x.Text.ToLower() == "text");
 
                 // Retrieve images and video from request
                 List<StreamContentDTO> files = new List<StreamContentDTO>();
@@ -106,7 +107,7 @@ namespace VitalityFunctionsApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> GetTimelinePosts([HttpTrigger(AuthorizationLevel.Anonymous, "GET", Route = "timelinepost")] HttpRequestData req, FunctionContext executionContext)
         {
-            return await _requestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await _requestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 Dictionary<string, StringValues> queryParams = QueryHelpers.ParseQuery(req.Url.Query);
                 int limit = int.Parse(queryParams["limit"]);
@@ -139,7 +140,7 @@ namespace VitalityFunctionsApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> GetTimelinePostById([HttpTrigger(AuthorizationLevel.Anonymous, "GET", Route = "timelinepost/{timelinePostId}")] HttpRequestData req, FunctionContext executionContext, string timelinePostId)
         {
-            return await _requestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await _requestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 TimelinePostDTO timelinePost = new TimelinePostDTO();
 
@@ -169,7 +170,7 @@ namespace VitalityFunctionsApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> DeletePost([HttpTrigger(AuthorizationLevel.Anonymous, "DELETE", Route = "timelinepost/{timelinePostId}")] HttpRequestData req, string timelinePostId, FunctionContext executionContext)
         {
-            return await _requestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await _requestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
                 bool success = false;
@@ -202,7 +203,7 @@ namespace VitalityFunctionsApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> PostComment([HttpTrigger(AuthorizationLevel.Anonymous, "POST", Route = "timelinepost/{timelinePostId}/comment")] HttpRequestData req, string timelinePostId, FunctionContext executionContext)
         {
-            return await _requestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await _requestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
                 CommentDTO comment = new CommentDTO();
@@ -234,7 +235,7 @@ namespace VitalityFunctionsApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> GetLikersOnPost([HttpTrigger(AuthorizationLevel.Anonymous, "GET", Route = "timelinepost/{timelinePostId}/likers")] HttpRequestData req, string timelinePostId, FunctionContext executionContext)
         {
-            return await _requestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await _requestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 Dictionary<string, StringValues> queryParams = QueryHelpers.ParseQuery(req.Url.Query);
                 int limit = int.Parse(queryParams["limit"]);
@@ -269,7 +270,7 @@ namespace VitalityFunctionsApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> GetCommentsOnPost([HttpTrigger(AuthorizationLevel.Anonymous, "GET", Route = "timelinepost/{timelinePostId}/comments")] HttpRequestData req, string timelinePostId, FunctionContext executionContext)
         {
-            return await _requestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await _requestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 Dictionary<string, StringValues> queryParams = QueryHelpers.ParseQuery(req.Url.Query);
                 int limit = int.Parse(queryParams["limit"]);
@@ -302,7 +303,7 @@ namespace VitalityFunctionsApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> PutLikeOnPost([HttpTrigger(AuthorizationLevel.Anonymous, "PUT", Route = "timelinepost/{timelinePostId}/like")] HttpRequestData req, string timelinePostId, FunctionContext executionContext)
         {
-            return await _requestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await _requestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
                 var success = false;
@@ -333,7 +334,7 @@ namespace VitalityFunctionsApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> DeleteLikeOnPost([HttpTrigger(AuthorizationLevel.Anonymous, "DELETE", Route = "timelinepost/{timelinePostId}/like")] HttpRequestData req, string timelinePostId, FunctionContext executionContext)
         {
-            return await _requestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await _requestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
                 bool success = false;

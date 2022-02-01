@@ -231,5 +231,13 @@ namespace Infrastructure.Context
 
             return users;
         }
+
+        public async Task DeleteUserById(string userId)
+        {
+            User user = await _dbContext.Users.FindAsync(userId);
+
+            _dbContext.Remove(user);
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

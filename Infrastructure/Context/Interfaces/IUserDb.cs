@@ -26,6 +26,7 @@ namespace Infrastructure.Context.Interfaces
         Task UpdateUserTotalPoints(string userId, int points);
         Task<List<User>> GetUsersArrangedByPoints(int limit, int offset);
         Task<List<string>> GetAllUsers();
+        Task DeleteUserById(string userId);
 
     }
 }

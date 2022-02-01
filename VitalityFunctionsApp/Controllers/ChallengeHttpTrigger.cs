@@ -51,7 +51,7 @@ namespace InhollandVitalityApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> CreateChallenge([HttpTrigger(AuthorizationLevel.Anonymous, "POST", Route = "challenge")] HttpRequestData req, FunctionContext executionContext)
         {
-            return await RequestValidator.ValidateRequest(req, executionContext, "Admin", async (ClaimsPrincipal currentUser) =>
+            return await RequestValidator.ValidateRequest(req, executionContext, UserType.Admin.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
                 ChallengeCreationRequest challenge = JsonConvert.DeserializeObject<ChallengeCreationRequest>(await new StreamReader(req.Body).ReadToEndAsync());
@@ -82,7 +82,7 @@ namespace InhollandVitalityApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> GetChallenge([HttpTrigger(AuthorizationLevel.Anonymous, "GET", Route = "challenge/{challengeId}")] HttpRequestData req, string challengeId, FunctionContext executionContext)
         {
-            return await RequestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await RequestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 ChallengeDTO challenge = new ChallengeDTO();
 
@@ -116,7 +116,7 @@ namespace InhollandVitalityApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> GetAllChallenges([HttpTrigger(AuthorizationLevel.Anonymous, "GET", Route = "challenge")] HttpRequestData req, FunctionContext executionContext, string challengeType, int limit, int offset, string progress, string userId)
         {
-            return await RequestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await RequestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 List<ChallengeDTO> challenges = new List<ChallengeDTO>();
                 Dictionary<string, StringValues> queryParams = QueryHelpers.ParseQuery(req.Url.Query);
@@ -170,7 +170,7 @@ namespace InhollandVitalityApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> GetSubscribedUsers([HttpTrigger(AuthorizationLevel.Anonymous, "GET", Route = "challenge/{challengeId}/subscribers")] HttpRequestData req, FunctionContext executionContext, string challengeId, int limit, int offset)
         {
-            return await RequestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await RequestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 List<SubscribedUsersDTO> subscribedUsers = new List<SubscribedUsersDTO>();
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
@@ -201,7 +201,7 @@ namespace InhollandVitalityApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> UpdateChallenge([HttpTrigger(AuthorizationLevel.Anonymous, "PUT", Route = "challenge/{challengeId}")] HttpRequestData req, FunctionContext executionContext, string challengeId)
         {
-            return await RequestValidator.ValidateRequest(req, executionContext, "Admin", async (ClaimsPrincipal currentUser) =>
+            return await RequestValidator.ValidateRequest(req, executionContext, UserType.Admin.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
                 ChallengeUpdatePropertiesDTO challenge = JsonConvert.DeserializeObject<ChallengeUpdatePropertiesDTO>(await new StreamReader(req.Body).ReadToEndAsync());
@@ -234,7 +234,7 @@ namespace InhollandVitalityApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> RegisterToChallenge([HttpTrigger(AuthorizationLevel.Anonymous, "POST", Route = "challenge/{challengeId}/subscribe")] HttpRequestData req, string challengeId, FunctionContext executionContext)
         {
-            return await RequestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await RequestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
 
@@ -267,7 +267,7 @@ namespace InhollandVitalityApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> UpdateChallengeProgress([HttpTrigger(AuthorizationLevel.Anonymous, "PUT", Route = "challenge/{challengeId}/progress")] HttpRequestData req, FunctionContext executionContext, string challengeId, int challengeProgress)
         {
-            return await RequestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await RequestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 string currentUserId = currentUser.FindFirst(ClaimTypes.Sid).Value;
 
@@ -298,7 +298,7 @@ namespace InhollandVitalityApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> UpdateChallengeImage([HttpTrigger(AuthorizationLevel.Anonymous, "PUT", Route = "challenge/{challengeId}/image")] HttpRequestData req, FunctionContext executionContext, string challengeId)
         {
-            return await RequestValidator.ValidateRequest(req, executionContext, "Admin", async (ClaimsPrincipal currentUser) =>
+            return await RequestValidator.ValidateRequest(req, executionContext, UserType.Admin.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.BadRequest);
                 string currentUserId = currentUser.FindFirst(ClaimTypes.Sid).Value;
@@ -343,7 +343,7 @@ namespace InhollandVitalityApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> UpdateChallengeVideo([HttpTrigger(AuthorizationLevel.Anonymous, "PUT", Route = "challenge/{challengeId}/video")] HttpRequestData req, FunctionContext executionContext, string challengeId)
         {
-            return await RequestValidator.ValidateRequest(req, executionContext, "Admin", async (ClaimsPrincipal currentUser) =>
+            return await RequestValidator.ValidateRequest(req, executionContext, UserType.Admin.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 string currentUserId = currentUser.FindFirst(ClaimTypes.Sid).Value;
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.BadRequest);
@@ -391,7 +391,7 @@ namespace InhollandVitalityApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> DeleteChallenge([HttpTrigger(AuthorizationLevel.Anonymous, "DELETE", Route = "challenge/{challengeId}")] HttpRequestData req, FunctionContext executionContext, string challengeId)
         {
-            return await RequestValidator.ValidateRequest(req, executionContext, "Admin", async (ClaimsPrincipal currentUser) =>
+            return await RequestValidator.ValidateRequest(req, executionContext, UserType.Admin.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
                 ChallengeDTO deletedChallenge = new ChallengeDTO();

@@ -1,4 +1,5 @@
 ﻿using Domains;
+using Domains.Enums;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -57,7 +58,6 @@ namespace Services
             return await CreateToken(user);
         }
 
-        //TODO: Check if account is of type User or Admin
         public async Task<LoginResult> CreateToken(User user)
         {
             string refreshToken = await this.CreateRefreshToken(user);
@@ -66,22 +66,22 @@ namespace Services
             {
                 JwtSecurityToken AdminToken = await CreateToken(new Claim[]
                 {
-                    new Claim(ClaimTypes.Role, "Admin"),
+                    new Claim(ClaimTypes.Role, UserType.Admin.ToString()),
                     new Claim(ClaimTypes.Sid, user.UserId),
                     new Claim(ClaimTypes.Email, user.Email)
                 });
 
-                return new LoginResult(AdminToken, "Admin", refreshToken);
+                return new LoginResult(AdminToken, UserType.Admin.ToString(), refreshToken);
             }
 
             JwtSecurityToken UserToken = await CreateToken(new Claim[]
             {
-                new Claim(ClaimTypes.Role, "User"),
+                new Claim(ClaimTypes.Role, UserType.User.ToString()),
                 new Claim(ClaimTypes.Sid, user.UserId),
                 new Claim(ClaimTypes.Email, user.Email)
             });
 
-            return new LoginResult(UserToken, "User", refreshToken);
+            return new LoginResult(UserToken, UserType.User.ToString(), refreshToken);
         }
 
         private async Task<JwtSecurityToken> CreateToken(Claim[] Claims)

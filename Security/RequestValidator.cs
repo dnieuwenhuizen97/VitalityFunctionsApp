@@ -5,6 +5,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Security.Interfaces;
+using Domains.Enums;
 
 namespace Security
 {
@@ -17,12 +18,12 @@ namespace Security
                 ClaimsPrincipal User = GetJwtData(ExecutionContext, RoleType);
                 HttpResponseData Response = Req.CreateResponse(HttpStatusCode.Forbidden);
 
-                if ((User.IsInRole("User") && RoleType == "Admin"))
+                if ((User.IsInRole(UserType.User.ToString()) && RoleType == UserType.Admin.ToString()))
                 {
                     return Response;
                 }
 
-                if (User.IsInRole("User") || User.IsInRole("Admin"))
+                if (User.IsInRole(UserType.User.ToString()) || User.IsInRole(UserType.Admin.ToString()))
                 {
                     try
                     {

@@ -5,6 +5,7 @@ using Infrastructure.Context;
 using Infrastructure.Context.Interfaces;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using SendGrid.Helpers.Errors.Model;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -150,6 +151,18 @@ namespace Services
             List<User> users = await UserDb.GetUsersArrangedByPoints(limit, offset);
 
             return UserConversionHelper.ToScoreboardUserDTO(users);
+        }
+
+        public async Task<UserDTO> DeleteUserById(string userId)
+        {
+            User user = UserDb.FindUserById(userId);
+
+            if (user == null) 
+                throw new NotFoundException("User with the given userId was not found");
+            
+            await UserDb.DeleteUserById(userId);
+
+            return UserConversionHelper.ToDTO(user);
         }
     }
 }

@@ -22,6 +22,8 @@ using Domains.DTO;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 using HttpMultipartParser;
+using SendGrid.Helpers.Errors.Model;
+using Domains.Enums;
 
 namespace VitalityFunctionsApp.Controllers
 {
@@ -45,7 +47,6 @@ namespace VitalityFunctionsApp.Controllers
             this.InputSanitizationService = InputSanitizationService;
         }
 
-        // Get a user profile (yours or someone else's)
         [Function(nameof(GetUser))]
         [OpenApiOperation(operationId: "getUser", tags: new[] { "user" }, Summary = "Get your profile, or someone else's. If no userId is given, it returns your own profile", Description = "Returns the profile on userId or your own", Visibility = OpenApiVisibilityType.Important)]
         [OpenApiParameter(name: "userId", In = ParameterLocation.Query, Required = false, Type = typeof(string), Summary = "The userId of the other user to see the profile of. If this is empty the default returns your profile based on authorization", Description = "The userId of the other user to see the profile of. If this is empty the default returns your profile based on authorization", Visibility = OpenApiVisibilityType.Important)]
@@ -57,7 +58,7 @@ namespace VitalityFunctionsApp.Controllers
         [UnauthorizedRequest]
         public async Task<HttpResponseData> GetUser([HttpTrigger(AuthorizationLevel.Anonymous, "GET", Route = "user")] HttpRequestData req, FunctionContext executionContext, string userId)
         {
-            return await RequestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await RequestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
                 UserDTO user = new UserDTO();
@@ -166,7 +167,7 @@ namespace VitalityFunctionsApp.Controllers
         [UnauthorizedRequest]
         public async Task<HttpResponseData> GetUserByName([HttpTrigger(AuthorizationLevel.Anonymous, "GET", Route = "users/{name}")] HttpRequestData req, FunctionContext executionContext, string name, int limit, int offset)
         {
-            return await RequestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await RequestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
 
@@ -200,7 +201,7 @@ namespace VitalityFunctionsApp.Controllers
         [UnauthorizedRequest]
         public async Task<HttpResponseData> UpdateProfile([HttpTrigger(AuthorizationLevel.Anonymous, "PUT", Route = "user")] HttpRequestData req, FunctionContext executionContext)
         {
-            return await RequestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await RequestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
 
@@ -305,7 +306,7 @@ namespace VitalityFunctionsApp.Controllers
         [UnauthorizedRequest]
         public async Task<HttpResponseData> UpdateFollowing([HttpTrigger(AuthorizationLevel.Anonymous, "POST", Route = "user/follow")] HttpRequestData req, FunctionContext executionContext, string userId, bool following)
         {
-            return await RequestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await RequestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
                 UserDTO user = new UserDTO();
@@ -334,7 +335,7 @@ namespace VitalityFunctionsApp.Controllers
         [UnauthorizedRequest]
         public async Task<HttpResponseData> GetScoreboard([HttpTrigger(AuthorizationLevel.Anonymous, "GET", Route = "user/scoreboard")] HttpRequestData req, FunctionContext executionContext, int limit, int offset)
         {
-            return await RequestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await RequestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
                 List<ScoreboardUserDTO> users = new List<ScoreboardUserDTO>();
@@ -350,6 +351,55 @@ namespace VitalityFunctionsApp.Controllers
                 }
 
                 await response.WriteAsJsonAsync(users);
+
+                return response;
+            });
+        }
+
+        [Function(nameof(DeleteUser))]
+        [OpenApiOperation(operationId: "deleteUser", tags: new[] { "user" }, Summary = "Delete the current user's account", Description = "Delete the current user's account", Visibility = OpenApiVisibilityType.Important)]
+        [OpenApiParameter(name: "userId", In = ParameterLocation.Query, Required = false, Type = typeof(string), Summary = "The userId of the user that needs to be deleted (admin)", Description = "Deletes a specific user by id (admin)", Visibility = OpenApiVisibilityType.Important)]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(UserDTO), Summary = "Successfully deleted user", Description = "Successful operation", Example = typeof(UserDTOExample))]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Summary = "BadRequest no parameters", Description = "BadRequest no parameters")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Summary = "User not found", Description = "User not found")]
+        [VitalityAppAuth]
+        [ForbiddenRequest]
+        [UnauthorizedRequest]
+        public async Task<HttpResponseData> DeleteUser([HttpTrigger(AuthorizationLevel.Anonymous, "DELETE", Route = "user")] HttpRequestData req, FunctionContext executionContext, string userId)
+        {
+            return await RequestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
+            {
+                HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
+                UserDTO user = new UserDTO();
+                string currentUserId = currentUser.FindFirst(ClaimTypes.Sid).Value;
+
+                try
+                {
+                    if (userId == null)
+                    {
+                        user = await UserService.DeleteUserById(currentUserId);
+                    }
+                    else
+                    {
+                        if (currentUser.FindFirst(ClaimTypes.Role).Value != UserType.Admin.ToString())
+                        {
+                            response = req.CreateResponse(HttpStatusCode.Forbidden);
+                            return response;
+                        }
+                        user = await UserService.DeleteUserById(userId);
+                    }
+                    await response.WriteAsJsonAsync(user);
+                }
+                catch (NotFoundException nfe)
+                {
+                    Logger.LogError(nfe.Message);
+                    response = req.CreateResponse(HttpStatusCode.NotFound);
+                }
+                catch (Exception e)
+                {
+                    Logger.LogError(e.Message);
+                    response = req.CreateResponse(HttpStatusCode.BadRequest);
+                }
 
                 return response;
             });
