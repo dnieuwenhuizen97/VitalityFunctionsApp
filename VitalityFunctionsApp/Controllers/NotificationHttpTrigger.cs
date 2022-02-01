@@ -44,7 +44,7 @@ namespace VitalityFunctionsApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> CreatePushToken([HttpTrigger(AuthorizationLevel.Anonymous, "POST", Route = "notification")] HttpRequestData req, FunctionContext executionContext)
         {
-            return await _requestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await _requestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
                 var pushtoken = new PushTokenDTO();
@@ -77,7 +77,7 @@ namespace VitalityFunctionsApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> UpdatePushToken([HttpTrigger(AuthorizationLevel.Anonymous, "PUT", Route = "notification")] HttpRequestData req, FunctionContext executionContext)
         {
-            return await _requestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await _requestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 Dictionary<string, StringValues> queryParams = QueryHelpers.ParseQuery(req.Url.Query);
                 string IsTurnedOn = queryParams["IsTurnedOn"];
@@ -113,7 +113,7 @@ namespace VitalityFunctionsApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> GetNotifications([HttpTrigger(AuthorizationLevel.Anonymous, "GET", Route = "notification")] HttpRequestData req, FunctionContext executionContext)
         {
-            return await _requestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await _requestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 Dictionary<string, StringValues> queryParams = QueryHelpers.ParseQuery(req.Url.Query);
                 int limit = int.Parse(queryParams["limit"]);
@@ -148,7 +148,7 @@ namespace VitalityFunctionsApp.Controllers
         [VitalityAppAuth]
         public async Task<HttpResponseData> DeletePushToken([HttpTrigger(AuthorizationLevel.Anonymous, "DELETE", Route = "notification/{pushTokenId}")] HttpRequestData req, string pushTokenId, FunctionContext executionContext)
         {
-            return await _requestValidator.ValidateRequest(req, executionContext, "User", async (ClaimsPrincipal currentUser) =>
+            return await _requestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
                 bool success = false;
