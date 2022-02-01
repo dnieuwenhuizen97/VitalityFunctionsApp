@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.2" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.OpenApi" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.OpenApi" Version="0.8.1-preview" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="5.0.11" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.12.2" />
   </ItemGroup>
