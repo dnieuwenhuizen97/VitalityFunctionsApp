@@ -63,7 +63,7 @@ stages:
   jobs:
   - deployment: Deploy
     displayName: Deploy
-    environment: 'development'
+    environment: 'production'
     pool:
       vmImage: $(vmImageName)
 
