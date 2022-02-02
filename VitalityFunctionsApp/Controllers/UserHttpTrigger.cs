@@ -404,5 +404,61 @@ namespace VitalityFunctionsApp.Controllers
                 return response;
             });
         }
+
+        [Function(nameof(RecoverAccount))]
+        [OpenApiOperation(operationId: "recoverAccount", tags: new[] { "user" }, Summary = "Request a recoverylink for the user", Description = "Request a recoverylink for the user")]
+        [OpenApiParameter(name: "email", In = ParameterLocation.Query, Required = true, Type = typeof(string), Summary = "The e-mail address for the user to be recovered", Description = "Sends an e-mail with recovery link to the specified e-mail address", Visibility = OpenApiVisibilityType.Important)]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Summary = "Invalid e-mail address", Description = "Invalid e-mail address")]
+        public async Task<HttpResponseData> RecoverAccount([HttpTrigger(AuthorizationLevel.Anonymous, "POST", Route = "user/recover")] HttpRequestData req, FunctionContext executionContext, string email)
+        {
+            HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
+
+            //if (!await ValidationService.ValidateEmployeeEmail(user.Email))
+            //{
+            //    HttpResponseData badResponse = req.CreateResponse(HttpStatusCode.BadRequest);
+            //    return badResponse;
+            //}
+
+            try
+            {
+                await UserService.CreateRecoveryToken(email);
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e.Message);
+                response = req.CreateResponse(HttpStatusCode.BadRequest);
+            }
+
+
+            return response;
+        }
+
+        [Function(nameof(ResetPassword))]
+        [OpenApiOperation(operationId: "resetPassword", tags: new[] { "user" }, Summary = "Resets the user's password", Description = "Resets the user's password with the help of a recovery token")]
+        [OpenApiParameter(name: "password", In = ParameterLocation.Query, Required = true, Type = typeof(string), Summary = "The user's new password", Description = "The user's new password", Visibility = OpenApiVisibilityType.Important)]
+        [OpenApiParameter(name: "recoveryToken", In = ParameterLocation.Query, Required = true, Type = typeof(string), Summary = "The recovery token", Description = "The token that confirms that a user is allowed to reset his password", Visibility = OpenApiVisibilityType.Important)]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Summary = "Invalid input", Description = "Invalid input")]
+        public async Task<HttpResponseData> ResetPassword([HttpTrigger(AuthorizationLevel.Anonymous, "POST", Route = "user/password")] HttpRequestData req, FunctionContext executionContext, string password, string recoveryToken)
+        {
+            HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
+
+            if (!await ValidationService.ValidatePassword(password))
+            {
+                return req.CreateResponse(HttpStatusCode.BadRequest);
+            }
+
+            try
+            {
+                await UserService.ResetUserPassword(password, recoveryToken);
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e.Message);
+                response = req.CreateResponse(HttpStatusCode.BadRequest);
+            }
+
+
+            return response;
+        }
     }
 }

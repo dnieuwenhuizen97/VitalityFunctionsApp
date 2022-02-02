@@ -60,13 +60,13 @@ namespace Infrastructure.Context
             {
                 User user = _dbContext.Users
                                             .AsQueryable()
-                                            .Where(u => u.Email == email).First(); // TODO: check is First Async
+                                            .Where(u => u.Email == email).First();
 
                 return user;
             }
-            catch (Exception e)
+            catch
             {
-                throw new KeyNotFoundException("No user exists with this e-mail address.");
+                throw new Exception("No user exists with this e-mail address.");
             }
         }
 
@@ -237,6 +237,42 @@ namespace Infrastructure.Context
             User user = await _dbContext.Users.FindAsync(userId);
 
             _dbContext.Remove(user);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task SaveUserRecoveryToken(UserRecoveryToken userRecoveryToken)
+        {
+            await _dbContext.RecoveryTokens.AddAsync(userRecoveryToken);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<UserRecoveryToken> FindRecoveryTokenById(string recoveryTokenId)
+        {
+            try
+            {
+                UserRecoveryToken recoveryToken = await _dbContext.RecoveryTokens.FindAsync(recoveryTokenId);
+
+                return recoveryToken;
+            }
+            catch
+            {
+                throw new Exception("No recovery token found with the given id");
+            }
+        }
+
+        public async Task UpdateUserPassword(string userId, string password)
+        {
+            User user = await _dbContext.Users.FindAsync(userId);
+            user.SetUserPassword(BCrypt.Net.BCrypt.HashPassword(password));
+
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteRecoveryTokenById(string recoveryTokenId)
+        {
+            UserRecoveryToken recoveryToken = await _dbContext.RecoveryTokens.FindAsync(recoveryTokenId);
+
+            _dbContext.Remove(recoveryToken);
             await _dbContext.SaveChangesAsync();
         }
     }

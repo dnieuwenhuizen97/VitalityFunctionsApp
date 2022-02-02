@@ -44,7 +44,7 @@ namespace Services
 
             UserDb.SaveUser(user);
 
-            QueueService.CreateMessage($"{request.Email},{user.UserId}");
+            QueueService.CreateMessage($"{request.Email},{user.UserId}", "email-verification-queue");
 
             return Task.FromResult(user);
         }
@@ -163,6 +163,32 @@ namespace Services
             await UserDb.DeleteUserById(userId);
 
             return UserConversionHelper.ToDTO(user);
+        }
+
+        public async Task CreateRecoveryToken(string email)
+        {
+            User user = UserDb.FindUserByEmail(email);
+
+            UserRecoveryToken recoveryToken = new UserRecoveryToken(user.UserId);
+            await UserDb.SaveUserRecoveryToken(recoveryToken);
+
+            await QueueService.CreateMessage($"{user.Email},{recoveryToken.RecoveryTokenId}", "user-recovery-queue");
+        }
+
+        public async Task ResetUserPassword(string password, string token)
+        {
+            UserRecoveryToken recoveryToken = await UserDb.FindRecoveryTokenById(token);
+
+            if (recoveryToken == null)
+                throw new Exception("Recovery token does not exist");
+
+            if (DateTime.Now > recoveryToken.TimeCreated.AddHours(24))
+                throw new Exception("Recovery token has expired");
+
+            User user = UserDb.FindUserById(recoveryToken.UserId);
+            await UserDb.UpdateUserPassword(user.UserId, password);
+
+            await UserDb.DeleteRecoveryTokenById(recoveryToken.RecoveryTokenId);
         }
     }
 }

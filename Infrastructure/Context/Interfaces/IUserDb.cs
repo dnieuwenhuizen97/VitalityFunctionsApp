@@ -27,6 +27,9 @@ namespace Infrastructure.Context.Interfaces
         Task<List<User>> GetUsersArrangedByPoints(int limit, int offset);
         Task<List<string>> GetAllUsers();
         Task DeleteUserById(string userId);
-
+        Task SaveUserRecoveryToken(UserRecoveryToken userRecoveryToken);
+        Task<UserRecoveryToken> FindRecoveryTokenById(string recoveryTokenId);
+        Task UpdateUserPassword(string userId, string password);
+        Task DeleteRecoveryTokenById(string recoveryTokenId);
     }
 }

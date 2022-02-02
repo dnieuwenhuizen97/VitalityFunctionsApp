@@ -27,5 +27,15 @@ namespace EmailQueueTrigger
 
             logger.LogInformation($"C# Queue trigger function processed: {emailQueueItem}");
         }
+
+        [Function("RecoveryEmailQueueTrigger")]
+        public async Task Recover([QueueTrigger("user-recovery-queue", Connection = "AzureWebJobsStorage")] string queueItem, FunctionContext context)
+        {
+            var logger = context.GetLogger("RecoveryEmailQueueTrigger");
+
+            string[] data = queueItem.Split(',');
+
+            await ValidationService.
+        }
     }
 }
