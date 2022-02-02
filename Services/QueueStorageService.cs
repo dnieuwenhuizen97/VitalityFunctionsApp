@@ -11,7 +11,6 @@ namespace Services
         // TODO : Add file with the configurations for the db connections.
 
         private string connectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
-        private string queueName = "email-verification-queue";
         private CloudStorageAccount storageAccount { get; set; }
         private CloudQueueClient queueClient { get; set; }
         private CloudQueue queue { get; set; }
@@ -20,11 +19,12 @@ namespace Services
         {
             storageAccount = CloudStorageAccount.Parse(connectionString);
             queueClient = storageAccount.CreateCloudQueueClient();
-            queue = queueClient.GetQueueReference(queueName);
         }
 
-        public async Task CreateMessage(string message)
+        public async Task CreateMessage(string message, string queueName)
         {
+            queue = queueClient.GetQueueReference(queueName);
+
             try
             {
                 await queue.CreateIfNotExistsAsync();

@@ -42,6 +42,28 @@ namespace Services
                 Console.WriteLine(e);
             }
         }
+        public async Task SendRecoveryEmail(string email, string recoveryToken)
+        {
+            string frontendHost = "https://icy-grass-0abcd0203.1.azurestaticapps.net/";
+
+            Uri uri = new Uri($"{frontendHost}/?token={recoveryToken}#/recover");
+            Console.WriteLine(uri);
+            try
+            {
+                var client = new SendGridClient(Environment.GetEnvironmentVariable("SendGridClient"));
+                var from = new EmailAddress(Environment.GetEnvironmentVariable("SendGridEmailAddress"), "Inholland MijnVitaliteit");
+                var subject = "Herstel je MijnVitaliteit account";
+                var to = new EmailAddress(email, "");
+                var plainTextContent = "";
+                var htmlContent = $"<div><p>Om uw wachtwoord te herstellen kunt u gebruik maken van <a href={uri}>deze link</a>.</p></div>";
+                var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+                var response = await client.SendEmailAsync(msg);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
 
         public Task<bool> ValidatePassword(string Password)
         {
@@ -57,5 +79,6 @@ namespace Services
             }
             return Task.FromResult(false);
         }
+
     }
 }

@@ -4,7 +4,7 @@ namespace Services.Interfaces
 {
     public interface IQueueStorageService
     {
-        Task CreateMessage(string message);
+        Task CreateMessage(string message, string queueName);
 
     }
 }

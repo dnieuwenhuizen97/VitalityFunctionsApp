@@ -14,6 +14,7 @@ namespace Infrastructure.Context
         public DbSet<NotificationDAL> Notifications { get; set; }
         public DbSet<LikeDAL> Likes { get; set; }
         public DbSet<CommentDAL> Comments { get; set; }
+        public DbSet<UserRecoveryToken> RecoveryTokens { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder dbContextOptionsBuilder)
         {
@@ -59,6 +60,10 @@ namespace Infrastructure.Context
                 entity.Property(e => e.CommentId).ValueGeneratedOnAdd();
             });
 
+            modelBuilder.Entity<UserRecoveryToken>(entity =>
+            {
+                entity.Property(e => e.RecoveryTokenId).ValueGeneratedOnAdd();
+            });
         }
     }
 }

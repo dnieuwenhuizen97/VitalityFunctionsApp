@@ -22,6 +22,8 @@ namespace Services.Interfaces
         Task UpdateUserTotalPoints(string userId, int points);
         Task<List<ScoreboardUserDTO>> GetAllUsersArrangedByPoints(int limit, int offset);
         Task<UserDTO> DeleteUserById(string userId);
+        Task CreateRecoveryToken(string email);
+        Task ResetUserPassword(string password, string token);
     }
 
 }
