@@ -35,7 +35,7 @@ namespace EmailQueueTrigger
 
             string[] data = queueItem.Split(',');
 
-            await ValidationService.
+            await ValidationService.SendRecoveryEmail(data[0], data[1]);
         }
     }
 }

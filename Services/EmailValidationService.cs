@@ -46,7 +46,7 @@ namespace Services
         {
             string frontendHost = "https://icy-grass-0abcd0203.1.azurestaticapps.net/";
 
-            Uri uri = new Uri($"{frontendHost}/?token={recoveryToken}#/recover");
+            Uri uri = new Uri($"{frontendHost}?token={recoveryToken}#/recover");
             Console.WriteLine(uri);
             try
             {
