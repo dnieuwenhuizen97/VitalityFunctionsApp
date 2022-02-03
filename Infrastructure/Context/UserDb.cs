@@ -282,7 +282,11 @@ namespace Infrastructure.Context
 
             if (recoveryToken != null)
             {
-                return recoveryToken.TimeCreated.AddHours(24) > DateTime.Now;
+                if (recoveryToken.TimeCreated.AddHours(24) > DateTime.Now)
+                {
+                    return true;
+                }
+                _dbContext.Remove(recoveryToken);
             }
             return false;
         }
