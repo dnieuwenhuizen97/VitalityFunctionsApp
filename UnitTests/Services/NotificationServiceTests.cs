@@ -77,27 +77,6 @@ namespace UnitTests.Services
         }
 
         [Fact]
-        public async Task Get_Notifications_Should_Return_Empty_List_When_No_Notifications_Found()
-        {
-            // Arrange
-            User user = new User();
-            int limit = 5;
-            int offset = 0;
-
-            _userDbMock.Setup(x => x.UserExistsById(user.UserId))
-                .Returns(true);
-            _notificationDbMock.Setup(x => x.GetNotifications(user, limit, offset))
-                .Returns(Task.FromResult(new List<NotificationDAL>()));
-
-            // Act
-            List<NotificationDTO> notifications = await _notificationService.GetNotifications(user.UserId, limit, offset);
-
-            // Assert
-            Assert.NotNull(notifications);
-            Assert.True(notifications.Count == 0);
-        }
-
-        [Fact]
         public async Task Update_Push_Token_Should_Return_List_Of_Push_Token_DTO_Objects()
         {
             // Arrange

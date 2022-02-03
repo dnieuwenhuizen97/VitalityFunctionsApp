@@ -138,58 +138,6 @@ namespace UnitTests.Services
         }
 
         [Fact]
-        public async Task Post_Comment_Should_Return_Comment_DTO_Object()
-        {
-            // Arrange
-            CommentCreationRequest request = new CommentCreationRequest("Comment text test");
-            TimelinePostDAL timelinePost = new TimelinePostDAL();
-            User user = new User();
-
-            CommentDAL testComment = new CommentDAL
-            {
-                User = user,
-                TimelinePost = timelinePost,
-                Text = request.Text,
-                Timestamp = DateTime.Now
-            };
-
-
-            _commentDbMock.Setup(x => x.PostComment(It.IsAny<CommentDAL>()))
-                .Returns(Task.FromResult(testComment));
-            _timelineDbMock.Setup(x => x.GetTimelinePostById(timelinePost.TimelinePostId))
-                .Returns(Task.FromResult(timelinePost));
-
-            // Act
-            CommentDTO commentDTO = await _timelineService.PostComment(request, timelinePost.TimelinePostId, user.UserId);
-
-            // Assert
-            Assert.NotNull(commentDTO);
-        }
-
-        [Fact]
-        public async Task Put_Like_On_Post_Should_Return_True_When_Successful()
-        {
-            // Arrange
-            string userId = Guid.NewGuid().ToString();
-            string timelinePostId = Guid.NewGuid().ToString();
-
-            TimelinePostDAL timelinePost = new TimelinePostDAL();
-
-            _userDbMock.Setup(x => x.UserExistsById(userId))
-                .Returns(true);
-            _likeDbMock.Setup(x => x.LikeExists(timelinePostId, userId))
-                .Returns(Task.FromResult(false));
-            _timelineDbMock.Setup(x => x.GetTimelinePostById(It.IsAny<string>()))
-                .Returns(Task.FromResult(timelinePost));
-
-            // Act
-            bool result = await _timelineService.PutLikeOnPost(userId, timelinePostId);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        [Fact]
         public async Task Put_Like_On_Post_Should_Return_False_When_User_Not_Exist()
         {
             // Arrange
@@ -319,37 +267,6 @@ namespace UnitTests.Services
             // Assert
             Assert.NotNull(likes);
             Assert.True(likes.Count == 0);
-        }
-
-        [Fact]
-        public async Task Get_Comments_On_Post_Should_Return_List_Of_Comment_DTO_Objects()
-        {
-            // Arrange
-            string timelinePostId = Guid.NewGuid().ToString();
-            int limit = 5;
-            int offset = 0;
-
-            User user = new User();
-
-            List<CommentDAL> testComments = new List<CommentDAL>()
-            {
-                new CommentDAL { CommentId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL() },
-                new CommentDAL { CommentId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL() },
-                new CommentDAL { CommentId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL() },
-                new CommentDAL { CommentId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL() },
-            };
-
-            _commentDbMock.Setup(x => x.GetCommentsOnPost(timelinePostId, limit, offset))
-                .Returns(Task.FromResult(testComments));
-            _userDbMock.Setup(x => x.FindUserById(It.IsAny<string>()))
-                .Returns(user);
-
-            // Act
-            List<CommentOfUserDTO> comments = await _timelineService.GetCommentsOnPost(timelinePostId, limit, offset);
-
-            // Assert
-            Assert.NotNull(comments);
-            Assert.True(comments.Count == 4);
         }
 
         [Fact]
