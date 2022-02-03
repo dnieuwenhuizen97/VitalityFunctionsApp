@@ -43,8 +43,8 @@ namespace Services
             user.SetUserPassword(request.Password);
 
             UserDb.SaveUser(user);
-
-            QueueService.CreateMessage($"{request.Email},{user.UserId}", "email-verification-queue");
+            UserDb.SetActivated(user.UserId);
+            //QueueService.CreateMessage($"{request.Email},{user.UserId}", "email-verification-queue");
 
             return Task.FromResult(user);
         }
