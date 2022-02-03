@@ -44,9 +44,9 @@ namespace Services
         }
         public async Task SendRecoveryEmail(string email, string recoveryToken)
         {
-            string frontendHost = "https://icy-grass-0abcd0203.1.azurestaticapps.net/";
+            string passRecoveryHost = Environment.GetEnvironmentVariable("PassRecoveryHost");
 
-            Uri uri = new Uri($"{frontendHost}?token={recoveryToken}#/recover");
+            Uri uri = new Uri($"{passRecoveryHost}?token={recoveryToken}#/recover");
             Console.WriteLine(uri);
             try
             {
