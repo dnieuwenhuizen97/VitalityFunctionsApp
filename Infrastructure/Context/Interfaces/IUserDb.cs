@@ -31,5 +31,6 @@ namespace Infrastructure.Context.Interfaces
         Task<UserRecoveryToken> FindRecoveryTokenById(string recoveryTokenId);
         Task UpdateUserPassword(string userId, string password);
         Task DeleteRecoveryTokenById(string recoveryTokenId);
+        Task RemoveOldRecoveryTokens();
     }
 }
