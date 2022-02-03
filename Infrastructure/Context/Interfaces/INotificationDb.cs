@@ -1,4 +1,5 @@
-﻿using Domains.DAL;
+﻿using Domains;
+using Domains.DAL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace Infrastructure.Context.Interfaces
     public interface INotificationDb
     {
         Task CreateNotification(NotificationDAL notification);
-        Task<List<NotificationDAL>> GetNotifications(string userId, int limit, int offset);
-        Task<bool> FindSimilarFollowsWithin5Minutes(string toUserId, string currentUserId);
+        Task<List<NotificationDAL>> GetNotifications(User user, int limit, int offset);
+        Task<bool> FindSimilarFollowsWithin5Minutes(User toUser, string currentUserId);
     }
 }

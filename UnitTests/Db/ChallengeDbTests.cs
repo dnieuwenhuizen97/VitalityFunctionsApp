@@ -198,7 +198,7 @@ namespace UnitTests.Db
             string currentUserId = Guid.NewGuid().ToString();
             string challengeId = Guid.NewGuid().ToString();
 
-            User user = new User { UserId = currentUserId, SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challengeId) } };
+            User user = new User { UserId = currentUserId, SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(new Challenge()) } };
 
             _challengeDbMock.Setup(x => x.GetChallengeProgress(currentUserId, challengeId))
                 .Returns(Task.FromResult(user.SubscribedChallenges.First().ChallengeProgress));

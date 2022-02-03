@@ -46,10 +46,10 @@ namespace UnitTests.Services
 
             List<User> users = new List<User>()
             {
-                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challengeId) } },
-                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challengeId) } },
-                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challengeId) } },
-                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challengeId) } },
+                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challenge) } },
+                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challenge) } },
+                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challenge) } },
+                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challenge) } },
             };
 
             _challengeDbMock.Setup(x => x.GetChallenge(challengeId))
@@ -100,10 +100,10 @@ namespace UnitTests.Services
 
             List<User> users = new List<User>()
             {
-                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(Guid.NewGuid().ToString()) } },
-                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(Guid.NewGuid().ToString()) } },
-                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(Guid.NewGuid().ToString()) } },
-                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(Guid.NewGuid().ToString()) } },
+                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challenges[0]) } },
+                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challenges[0]) } },
+                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challenges[0]) } },
+                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challenges[0]) } },
             };
 
             _challengeDbMock.Setup(x => x.GetAllChallenges(limit, offset))
@@ -156,10 +156,10 @@ namespace UnitTests.Services
 
             List<User> users = new List<User>()
             {
-                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(Guid.NewGuid().ToString()) } },
-                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(Guid.NewGuid().ToString()) } },
-                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(Guid.NewGuid().ToString()) } },
-                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(Guid.NewGuid().ToString()) } },
+                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challenges[0]) } },
+                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challenges[0]) } },
+                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challenges[0]) } },
+                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challenges[0]) } },
             };
 
             _challengeDbMock.Setup(x => x.GetChallengesGroupedBy(challengeType, limit, offset))
@@ -198,23 +198,23 @@ namespace UnitTests.Services
         public async Task Get_Challenge_Subscribers_Should_Return_List_Of_Subscribed_User_DTOs()
         {
             // Arrange
-            string challengeId = Guid.NewGuid().ToString();
+            Challenge challenge = new Challenge();
             int limit = 5;
             int offset = 0;
 
             List<User> users = new List<User>()
             {
-                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challengeId) } },
-                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challengeId) } },
-                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challengeId) } },
-                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challengeId) } },
+                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challenge) } },
+                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challenge) } },
+                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challenge) } },
+                new User { UserId = Guid.NewGuid().ToString(), SubscribedChallenges = new List<SubscribedChallenge>() { new SubscribedChallenge(challenge) } },
             };
 
             _challengeDbMock.Setup(x => x.GetChallengeSubscribers())
                 .Returns(Task.FromResult(users));
 
             // Act
-            List<SubscribedUsersDTO> subscribedUsers = await _challengeService.GetChallengeSubscribers(challengeId, limit, offset);
+            List<SubscribedUsersDTO> subscribedUsers = await _challengeService.GetChallengeSubscribers(challenge.ChallengeId, limit, offset);
 
             // Assert
             Assert.NotNull(subscribedUsers);

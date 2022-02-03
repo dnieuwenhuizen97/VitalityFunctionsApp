@@ -69,7 +69,7 @@ namespace Infrastructure.Context
                                                         .FirstOrDefaultAsync();
 
                 if (timelinePost is null) throw new DbUpdateException();
-                else if (timelinePost.UserId != currentUserId) throw new Exception("user id's of the timeline post and the current user should be equal");
+                else if (timelinePost.User.UserId != currentUserId) throw new Exception("user id's of the timeline post and the current user should be equal");
 
                 _dbContext.Remove(timelinePost);
                 await _dbContext.SaveChangesAsync();

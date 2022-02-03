@@ -23,8 +23,8 @@ namespace Domains.Helpers
             return new NotificationDTO
             {
                 NotificationId = notificaitonDAL.NotificationId,
-                UserId = notificaitonDAL.UserId,
-                ToUser = notificaitonDAL.ToUser,
+                UserId = notificaitonDAL.UserSenderId,
+                ToUser = notificaitonDAL.ToUser.UserId,
                 NotificationType = notificaitonDAL.NotificationType,
                 TimeOfNotification = notificaitonDAL.TimeOfNotification,
                 TimelinePostId = notificaitonDAL.TimelinePostId,
@@ -32,16 +32,16 @@ namespace Domains.Helpers
             };
         }
 
-        public static NotificationDAL ToDAL(NotificationDTO notificaitonDAL)
+        public static NotificationDAL ToDAL(NotificationDTO notificaitonDTO, User toUser)
         {
             return new NotificationDAL
             {
-                UserId = notificaitonDAL.UserId,
-                ToUser = notificaitonDAL.ToUser,
-                NotificationType = notificaitonDAL.NotificationType,
-                TimeOfNotification = notificaitonDAL.TimeOfNotification,
-                TimelinePostId = notificaitonDAL.TimelinePostId,
-                ChallengeId = notificaitonDAL.challengeId
+                UserSenderId = notificaitonDTO.UserId,
+                ToUser = toUser,
+                NotificationType = notificaitonDTO.NotificationType,
+                TimeOfNotification = notificaitonDTO.TimeOfNotification,
+                TimelinePostId = notificaitonDTO.TimelinePostId,
+                ChallengeId = notificaitonDTO.challengeId
             };
         }
     }

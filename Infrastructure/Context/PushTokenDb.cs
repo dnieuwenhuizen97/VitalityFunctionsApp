@@ -1,4 +1,5 @@
-﻿using Domains.DAL;
+﻿using Domains;
+using Domains.DAL;
 using Domains.Enums;
 using Infrastructure.Context.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -82,14 +83,14 @@ namespace Infrastructure.Context
             }
         }
 
-        public async Task DeletePushToken(string userId, string pushTokenId)
+        public async Task DeletePushToken(User user, string pushTokenId)
         {
             try
             {
                 // When a pushtoken is delete, first delete the notifications that belong to it.
                 var notifications = await _dbContext.Notifications
                                                                   .AsQueryable()
-                                                                  .Where(x => x.UserId == userId)
+                                                                  .Where(x => x.ToUser == user)
                                                                   .ToListAsync();
 
                 if (notifications is not null || !notifications.Any())

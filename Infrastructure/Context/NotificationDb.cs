@@ -1,4 +1,5 @@
-﻿using Domains.DAL;
+﻿using Domains;
+using Domains.DAL;
 using Infrastructure.Context.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -30,7 +31,7 @@ namespace Infrastructure.Context
             }
         }
 
-        public async Task<bool> FindSimilarFollowsWithin5Minutes(string toUserId, string currentUserId)
+        public async Task<bool> FindSimilarFollowsWithin5Minutes(User toUser, string currentUserId)
         {
             try
             {
@@ -39,8 +40,8 @@ namespace Infrastructure.Context
 
                 var findSimilarFollow = await _dbContext.Notifications
                                                                   .AsQueryable()
-                                                                  .Where(x => x.ToUser == toUserId)
-                                                                  .Where(x => x.UserId == currentUserId)
+                                                                  .Where(x => x.ToUser == toUser)
+                                                                  .Where(x => x.UserSenderId == currentUserId)
                                                                   .Where(x => x.NotificationType == Domains.Enums.NotificationTypes.Follow)
                                                                   // if the notification is within now and three minutes. It is concidered spam
                                                                   .Where(x => currentTime > x.TimeOfNotification && x.TimeOfNotification < x3MinsLater)
@@ -58,7 +59,7 @@ namespace Infrastructure.Context
             
         }
 
-        public async Task<List<NotificationDAL>> GetNotifications(string userId, int limit, int offset)
+        public async Task<List<NotificationDAL>> GetNotifications(User user, int limit, int offset)
         {
             if (limit > 100)
             {
@@ -70,7 +71,7 @@ namespace Infrastructure.Context
             {
                 var notifications = await _dbContext.Notifications
                                                                     .AsQueryable()
-                                                                    .Where(x => x.ToUser == userId && x.UserId != userId)
+                                                                    .Where(x => x.ToUser == user && x.UserSenderId != user.UserId)
                                                                     .OrderByDescending(x => x.TimeOfNotification)
                                                                     .Skip(offset) // offset
                                                                     .Take(limit) // limit

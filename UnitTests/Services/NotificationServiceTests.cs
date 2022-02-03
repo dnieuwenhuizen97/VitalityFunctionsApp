@@ -1,4 +1,5 @@
-﻿using Domains.DAL;
+﻿using Domains;
+using Domains.DAL;
 using Domains.DTO;
 using Domains.Enums;
 using Infrastructure.Context.Interfaces;
@@ -79,17 +80,17 @@ namespace UnitTests.Services
         public async Task Get_Notifications_Should_Return_Empty_List_When_No_Notifications_Found()
         {
             // Arrange
-            string userId = Guid.NewGuid().ToString();
+            User user = new User();
             int limit = 5;
             int offset = 0;
 
-            _userDbMock.Setup(x => x.UserExistsById(userId))
+            _userDbMock.Setup(x => x.UserExistsById(user.UserId))
                 .Returns(true);
-            _notificationDbMock.Setup(x => x.GetNotifications(userId, limit, offset))
+            _notificationDbMock.Setup(x => x.GetNotifications(user, limit, offset))
                 .Returns(Task.FromResult(new List<NotificationDAL>()));
 
             // Act
-            List<NotificationDTO> notifications = await _notificationService.GetNotifications(userId, limit, offset);
+            List<NotificationDTO> notifications = await _notificationService.GetNotifications(user.UserId, limit, offset);
 
             // Assert
             Assert.NotNull(notifications);
@@ -168,14 +169,14 @@ namespace UnitTests.Services
         public async Task Delete_Push_Token_Should_Return_True_When_Successful()
         {
             // Arrange
-            string userId = Guid.NewGuid().ToString();
+            User user = new User();
             string pushTokenId = Guid.NewGuid().ToString();
 
-            _pushTokenDbMock.Setup(x => x.DeletePushToken(userId, pushTokenId))
+            _pushTokenDbMock.Setup(x => x.DeletePushToken(user, pushTokenId))
                 .Returns(Task.FromResult(true));
 
             // Act
-            bool result = await _notificationService.DeletePushToken(userId, pushTokenId);
+            bool result = await _notificationService.DeletePushToken(user.UserId, pushTokenId);
 
             // Assert
             Assert.True(result);

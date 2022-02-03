@@ -1,4 +1,5 @@
-﻿using Domains.DAL;
+﻿using Domains;
+using Domains.DAL;
 using Infrastructure.Context.Interfaces;
 using Moq;
 using System;
@@ -25,7 +26,7 @@ namespace UnitTests.Db
         public async Task Get_Notifications_Should_Return_List_Of_Notification_Objects()
         {
             // Arrange
-            string userId = Guid.NewGuid().ToString();
+            User user = new User();
             int limit = 5;
             int offset = 0;
 
@@ -37,11 +38,11 @@ namespace UnitTests.Db
                 new NotificationDAL(),
             };
 
-            _notificationDbMock.Setup(x => x.GetNotifications(userId, limit, offset))
+            _notificationDbMock.Setup(x => x.GetNotifications(user, limit, offset))
                 .Returns(Task.FromResult(testNotifications));
 
             // Act
-            List<NotificationDAL> notifications = await _notificationDb.GetNotifications(userId, limit, offset);
+            List<NotificationDAL> notifications = await _notificationDb.GetNotifications(user, limit, offset);
 
             // Assert
             Assert.NotNull(notifications);
@@ -52,16 +53,16 @@ namespace UnitTests.Db
         public async Task Get_Notifications_Should_Return_Empty_List_When_No_Notifications_Found()
         {
             // Arrange
-            string userId = Guid.NewGuid().ToString();
+            User user = new User();
             int limit = 5;
             int offset = 0;
 
 
-            _notificationDbMock.Setup(x => x.GetNotifications(userId, limit, offset))
+            _notificationDbMock.Setup(x => x.GetNotifications(user, limit, offset))
                 .Returns(Task.FromResult(new List<NotificationDAL>()));
 
             // Act
-            List<NotificationDAL> notifications = await _notificationDb.GetNotifications(userId, limit, offset);
+            List<NotificationDAL> notifications = await _notificationDb.GetNotifications(user, limit, offset);
 
             // Assert
             Assert.NotNull(notifications);

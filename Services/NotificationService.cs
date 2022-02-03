@@ -1,4 +1,5 @@
-﻿using Domains.DTO;
+﻿using Domains;
+using Domains.DTO;
 using Domains.Enums;
 using Domains.Helpers;
 using Infrastructure.Context;
@@ -28,7 +29,9 @@ namespace Services
 
         public async Task CreateNotification(NotificationDTO notificationDTO)
         {
-            var notificationDAL = NotificationConversiontHelper.ToDAL(notificationDTO);
+            User toUser = _dbUser.FindUserById(notificationDTO.ToUser);
+            var notificationDAL = NotificationConversiontHelper.ToDAL(notificationDTO, toUser);
+
             await _dbNotification.CreateNotification(notificationDAL);
         }
 
@@ -59,10 +62,11 @@ namespace Services
         {
             try
             {
-                var exists = _dbUser.UserExistsById(userId);
-                if (exists is false) { return null; }
+                if (!_dbUser.UserExistsById(userId))
+                    return null;
 
-                var notifications = await _dbNotification.GetNotifications(userId, limit, offset);
+                User user = _dbUser.FindUserById(userId);
+                var notifications = await _dbNotification.GetNotifications(user, limit, offset);
 
                 List<NotificationDTO> list = notifications
                                                     .Select(x =>
@@ -80,8 +84,8 @@ namespace Services
                     if (item.NotificationType == NotificationTypes.Follow)
                     {
                         // get the followers, filter if any contain the 'ToUser' id.
-                        var user = await _dbUser.FindUserWithFollowers(new Domains.User { UserId = sender.UserId } );
-                        if (user.Followers.Any(x => x.UserFollowerId.Contains(item.ToUser)))
+                        var userWithFollowers = await _dbUser.FindUserWithFollowers(new User { UserId = sender.UserId } );
+                        if (userWithFollowers.Followers.Any(x => x.UserFollower.Contains(item.ToUser)))
                         {
                             item.IsFollowing = true;
                         }
@@ -120,7 +124,8 @@ namespace Services
         {
             try
             {
-                await _dbPushToken.DeletePushToken(userId, pushTokenId);
+                User user = _dbUser.FindUserById(userId);
+                await _dbPushToken.DeletePushToken(user, pushTokenId);
                 return true;
             }
             catch (Exception ex)
@@ -134,19 +139,19 @@ namespace Services
             // don't send a notificiation if you are your own 'like/comment/etc'
             if (toUserId == currentUserId) return;
 
+            User toUser = _dbUser.FindUserById(toUserId);
+
             // if follow, see if same following values are already in db within 5 minutes.
             if (type == NotificationTypes.Follow)
             {
-                var followAlreadyNotified = await _dbNotification.FindSimilarFollowsWithin5Minutes(toUserId, currentUserId);
+                var followAlreadyNotified = await _dbNotification.FindSimilarFollowsWithin5Minutes(toUser, currentUserId);
                 if (followAlreadyNotified) return;
             }
-
-            var toUser = toUserId;
 
             //var iOSToken = await _dbPushToken.GetPushTokensByUserId(currentUserId, DeviceType.iOS);
             //var androidToken = await _dbPushToken.GetPushTokensByUserId(currentUserId, DeviceType.Android);
 
-            await AssembleNotification(toUser, currentUserId, type);
+            await AssembleNotification(toUserId, currentUserId, type);
         }
 
         public async Task SendNotification(string toUserId, string currentUserId, NotificationTypes type, string timelinePostId)

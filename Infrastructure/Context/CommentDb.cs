@@ -30,7 +30,7 @@ namespace Infrastructure.Context
             {
                 var comments = await _dbContext.Comments
                                                       .AsQueryable()
-                                                      .Where(x => x.TimelinePostId == timelinePostId)
+                                                      .Where(x => x.TimelinePost.TimelinePostId == timelinePostId)
                                                       .OrderBy(c => c.Timestamp)
                                                       .Skip(offset)
                                                       .Take(limit)
@@ -48,7 +48,7 @@ namespace Infrastructure.Context
         {
             List<CommentDAL> comments = await _dbContext.Comments
                                                         .AsQueryable()
-                                                        .Where(c => c.TimelinePostId == timelinePostId)
+                                                        .Where(c => c.TimelinePost.TimelinePostId == timelinePostId)
                                                         .ToListAsync();
 
             return comments.Count;
