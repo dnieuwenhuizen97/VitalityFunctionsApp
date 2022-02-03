@@ -287,6 +287,7 @@ namespace Infrastructure.Context
                     return true;
                 }
                 _dbContext.Remove(recoveryToken);
+                await _dbContext.SaveChangesAsync();
             }
             return false;
         }
