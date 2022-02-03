@@ -24,6 +24,7 @@ namespace Services.Interfaces
         Task<UserDTO> DeleteUserById(string userId);
         Task CreateRecoveryToken(string email);
         Task ResetUserPassword(string password, string token);
+        Task<bool> IsRecoveryTokenValid(string token);
     }
 
 }

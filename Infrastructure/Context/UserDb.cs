@@ -275,5 +275,16 @@ namespace Infrastructure.Context
             _dbContext.Remove(recoveryToken);
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<bool> IsRecoveryTokenValid(string token)
+        {
+            UserRecoveryToken recoveryToken = await _dbContext.RecoveryTokens.FindAsync(token);
+
+            if (recoveryToken != null)
+            {
+                return recoveryToken.TimeCreated.AddHours(24) > DateTime.Now;
+            }
+            return false;
+        }
     }
 }

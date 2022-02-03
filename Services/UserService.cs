@@ -179,16 +179,18 @@ namespace Services
         {
             UserRecoveryToken recoveryToken = await UserDb.FindRecoveryTokenById(token);
 
-            if (recoveryToken == null)
-                throw new Exception("Recovery token does not exist");
-
-            if (DateTime.Now > recoveryToken.TimeCreated.AddHours(24))
-                throw new Exception("Recovery token has expired");
+            if (!await IsRecoveryTokenValid(recoveryToken.RecoveryTokenId))
+                throw new Exception("Recovery token has expired or does not exist");
 
             User user = UserDb.FindUserById(recoveryToken.UserId);
             await UserDb.UpdateUserPassword(user.UserId, password);
 
             await UserDb.DeleteRecoveryTokenById(recoveryToken.RecoveryTokenId);
+        }
+
+        public async Task<bool> IsRecoveryTokenValid(string token)
+        {
+            return await UserDb.IsRecoveryTokenValid(token);
         }
     }
 }
