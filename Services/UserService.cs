@@ -190,10 +190,5 @@ namespace Services
 
             await UserDb.DeleteRecoveryTokenById(recoveryToken.RecoveryTokenId);
         }
-
-        public async Task RemoveOldRecoveryTokens()
-        {
-            await UserDb.RemoveOldRecoveryTokens();
-        }
     }
 }

@@ -275,22 +275,5 @@ namespace Infrastructure.Context
             _dbContext.Remove(recoveryToken);
             await _dbContext.SaveChangesAsync();
         }
-
-        public async Task RemoveOldRecoveryTokens()
-        {
-            List<UserRecoveryToken> recoveryTokens = await _dbContext.RecoveryTokens
-                                                                            .AsQueryable()
-                                                                            .ToListAsync();
-
-            foreach (UserRecoveryToken recoveryToken in recoveryTokens)
-            {
-                if (recoveryToken.TimeCreated.AddHours(12) < DateTime.Now)
-                {
-                    recoveryTokens.Remove(recoveryToken);
-                }
-            }
-
-            await _dbContext.SaveChangesAsync();
-        }
     }
 }
