@@ -190,5 +190,10 @@ namespace Services
 
             await UserDb.DeleteRecoveryTokenById(recoveryToken.RecoveryTokenId);
         }
+
+        public async Task<bool> IsRecoveryTokenValid(string token)
+        {
+            return await UserDb.IsRecoveryTokenValid(token);
+        }
     }
 }

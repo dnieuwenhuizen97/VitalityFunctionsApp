@@ -460,5 +460,29 @@ namespace VitalityFunctionsApp.Controllers
 
             return response;
         }
+
+        [Function(nameof(CheckRecoveryTokenValidity))]
+        [OpenApiOperation(operationId: "checkRecoveryTokenValidity", tags: new[] { "user" }, Summary = "Checks if a user's password recovery token is valid", Description = "Checks if a user's password recovery token is valid")]
+        [OpenApiParameter(name: "recoveryToken", In = ParameterLocation.Query, Required = true, Type = typeof(string), Summary = "The recovery token", Description = "The token that confirms that a user is allowed to reset his password", Visibility = OpenApiVisibilityType.Important)]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Summary = "Invalid input", Description = "Invalid input")]
+        public async Task<HttpResponseData> CheckRecoveryTokenValidity([HttpTrigger(AuthorizationLevel.Anonymous, "GET", Route = "user/recover")] HttpRequestData req, FunctionContext executionContext, string recoveryToken)
+        {
+            HttpResponseData response = req.CreateResponse(HttpStatusCode.BadRequest);
+
+            try
+            {
+                if (await UserService.IsRecoveryTokenValid(recoveryToken))
+                {
+                    response = req.CreateResponse(HttpStatusCode.OK);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e.Message);
+            }
+
+
+            return response;
+        }
     }
 }
