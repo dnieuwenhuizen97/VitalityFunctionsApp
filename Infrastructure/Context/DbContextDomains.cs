@@ -18,7 +18,7 @@ namespace Infrastructure.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder dbContextOptionsBuilder)
         {
-            dbContextOptionsBuilder.UseSqlServer("Server=tcp:vitality-app-sql-server.database.windows.net,1433;Initial Catalog=VitalityAppDb-tst;Persist Security Info=False;User ID=vitalityadmin;Password=*H@Y4oU@$TmwC9@OMZo6;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+            dbContextOptionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("SqlServer"));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
