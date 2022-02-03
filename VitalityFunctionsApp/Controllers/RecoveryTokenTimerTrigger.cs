@@ -15,8 +15,8 @@ namespace VitalityFunctionsApp.Controllers
             this._userService = userService;
         }
 
-        [Function("RecoveryTokenTimerTrigger")]
-        public async Task RemoveRecoveryTokens([TimerTrigger("20 9 * * * *")] MyInfo myTimer, FunctionContext context)
+        [Function(nameof(RemoveRecoveryTokens))]
+        public async Task RemoveRecoveryTokens([TimerTrigger("30 8 * * * *")] MyInfo myTimer, FunctionContext context)
         {
             var logger = context.GetLogger("RecoveryTokenTimerTrigger");
             logger.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
