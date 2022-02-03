@@ -146,7 +146,7 @@ namespace Services
             {
                 foreach (SubscribedChallenge challenge in user.SubscribedChallenges)
                 {
-                    if (challenge.ChallengeId == challengeId)
+                    if (challenge.Challenge.ChallengeId == challengeId)
                     {
                         if (challenge.ChallengeProgress == ChallengeProgress.InProgress || challenge.ChallengeProgress == ChallengeProgress.Done)
                             subscribedUsers.Add(

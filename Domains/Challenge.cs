@@ -52,6 +52,8 @@ namespace Domains
         [OpenApiProperty(Description = "Gets or sets the challenge points")]
         public int Points { get; set; }
 
+        public virtual ICollection<SubscribedChallenge> SubscribedChallenges { get; set;}
+
         public Challenge()
         {
 

@@ -6,11 +6,11 @@ namespace Domains.Helpers
 {
     public static class TimelineConversionHelper
     {
-        public static TimelinePostDAL ToDAL(TimelinePostCreationRequest request, string currentUserId)
+        public static TimelinePostDAL ToDAL(TimelinePostCreationRequest request, User currentUser)
         {
             return new TimelinePostDAL
             {
-                UserId = currentUserId,
+                User = currentUser,
                 PublishDate = DateTime.Now,
                 Text = request.Text,
                 ILikedPost = false
@@ -21,7 +21,7 @@ namespace Domains.Helpers
             return new TimelinePostDTO
             {
                 TimelinePostId = timelinePost.TimelinePostId,
-                UserId = timelinePost.UserId,
+                UserId = timelinePost.User.UserId,
                 FullName = fullName,
                 ProfilePicture = profilePicture,
                 PublishDate = timelinePost.PublishDate,
@@ -34,12 +34,12 @@ namespace Domains.Helpers
             };
         }
 
-        public static CommentDAL CommentToDAL(CommentCreationRequest request, string timelinePostId, string currentUserId)
+        public static CommentDAL CommentToDAL(CommentCreationRequest request, TimelinePostDAL timelinePost, User currentUser)
         {
             return new CommentDAL
             {
-                UserId = currentUserId,
-                TimelinePostId = timelinePostId,
+                User = currentUser,
+                TimelinePost = timelinePost,
                 Text = request.Text,
                 Timestamp = DateTime.Now
             };
@@ -48,8 +48,8 @@ namespace Domains.Helpers
         {
             return new CommentDTO
             {
-                UserId = commentDAL.UserId,
-                TimelinePostId = commentDAL.TimelinePostId,
+                UserId = commentDAL.User.UserId,
+                TimelinePostId = commentDAL.TimelinePost.TimelinePostId,
                 Text = commentDAL.Text,
                 Timestamp = DateTime.Now
             };
@@ -60,8 +60,8 @@ namespace Domains.Helpers
             return new LikeDTO()
             {
                 LikeId = like.LikeId,
-                TimelinePostId = like.TimelinePostId,
-                UserId = like.UserId,
+                TimelinePostId = like.TimelinePost.TimelinePostId,
+                UserId = like.User.UserId,
                 FullName = $"{user.Firstname} {user.Lastname}",
                 ProfilePicture = user.ProfilePicture,
                 JobTitle = user.JobTitle,
@@ -74,10 +74,10 @@ namespace Domains.Helpers
             return new CommentOfUserDTO()
             {
                 CommentId = comment.CommentId,
-                TimelinePostId = comment.TimelinePostId,
+                TimelinePostId = comment.TimelinePost.TimelinePostId,
                 Text = comment.Text,
                 Timestamp = comment.Timestamp,
-                UserId = comment.UserId,
+                UserId = comment.User.UserId,
                 FullName = $"{user.Firstname} {user.Lastname}",
                 ImageUrl = user.ProfilePicture
             };

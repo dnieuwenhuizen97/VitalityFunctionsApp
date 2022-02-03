@@ -43,12 +43,12 @@ namespace UnitTests.Services
         public async Task Create_Post_Should_Throw_Exception_When_Current_User_Not_Found()
         {
             // Arrange
-            string currentUserId = Guid.NewGuid().ToString();
+            User currentUser = new User();
             TimelinePostCreationRequest request = new TimelinePostCreationRequest("test post text");
 
             TimelinePostDAL testTimelinePost = new TimelinePostDAL
             {
-                UserId = currentUserId,
+                User = currentUser,
                 Text = request.Text,
                 ILikedPost = false
             };
@@ -57,7 +57,7 @@ namespace UnitTests.Services
                 .Returns(Task.FromResult(testTimelinePost));
 
             // Act
-            var exception = Assert.ThrowsAsync<NullReferenceException>(async () => { await _timelineService.CreatePost(request, currentUserId); });
+            var exception = Assert.ThrowsAsync<NullReferenceException>(async () => { await _timelineService.CreatePost(request, currentUser.UserId); });
 
             // Assert
             Assert.Equal("Object reference not set to an instance of an object.", exception.Result.Message);
@@ -78,10 +78,10 @@ namespace UnitTests.Services
 
             List<TimelinePostDAL> timelinePosts = new List<TimelinePostDAL>()
             {
-                new TimelinePostDAL { TimelinePostId = Guid.NewGuid().ToString(), UserId = currentUserId, ILikedPost = false },
-                new TimelinePostDAL { TimelinePostId = Guid.NewGuid().ToString(), UserId = currentUserId, ILikedPost = false },
-                new TimelinePostDAL { TimelinePostId = Guid.NewGuid().ToString(), UserId = currentUserId, ILikedPost = false },
-                new TimelinePostDAL { TimelinePostId = Guid.NewGuid().ToString(), UserId = currentUserId, ILikedPost = false },
+                new TimelinePostDAL { TimelinePostId = Guid.NewGuid().ToString(), User = user, ILikedPost = false },
+                new TimelinePostDAL { TimelinePostId = Guid.NewGuid().ToString(), User = user, ILikedPost = false },
+                new TimelinePostDAL { TimelinePostId = Guid.NewGuid().ToString(), User = user, ILikedPost = false },
+                new TimelinePostDAL { TimelinePostId = Guid.NewGuid().ToString(), User = user, ILikedPost = false },
             };
 
             _timelineDbMock.Setup(x => x.GetTimelinePosts(limit, offset))
@@ -142,26 +142,25 @@ namespace UnitTests.Services
         {
             // Arrange
             CommentCreationRequest request = new CommentCreationRequest("Comment text test");
-            string timelinePostId = Guid.NewGuid().ToString();
-            string currentUserId = Guid.NewGuid().ToString();
+            TimelinePostDAL timelinePost = new TimelinePostDAL();
+            User user = new User();
 
             CommentDAL testComment = new CommentDAL
             {
-                UserId = currentUserId,
-                TimelinePostId = timelinePostId,
+                User = user,
+                TimelinePost = timelinePost,
                 Text = request.Text,
                 Timestamp = DateTime.Now
             };
 
-            TimelinePostDAL timelinePost = new TimelinePostDAL();
 
             _commentDbMock.Setup(x => x.PostComment(It.IsAny<CommentDAL>()))
                 .Returns(Task.FromResult(testComment));
-            _timelineDbMock.Setup(x => x.GetTimelinePostById(timelinePostId))
+            _timelineDbMock.Setup(x => x.GetTimelinePostById(timelinePost.TimelinePostId))
                 .Returns(Task.FromResult(timelinePost));
 
             // Act
-            CommentDTO commentDTO = await _timelineService.PostComment(request, timelinePostId, currentUserId);
+            CommentDTO commentDTO = await _timelineService.PostComment(request, timelinePost.TimelinePostId, user.UserId);
 
             // Assert
             Assert.NotNull(commentDTO);
@@ -279,10 +278,10 @@ namespace UnitTests.Services
 
             List<LikeDAL> testLikes = new List<LikeDAL>()
             {
-                new LikeDAL { LikeId = Guid.NewGuid().ToString(), TimelinePostId = timelinePostId, UserId = Guid.NewGuid().ToString() },
-                new LikeDAL { LikeId = Guid.NewGuid().ToString(), TimelinePostId = timelinePostId, UserId = Guid.NewGuid().ToString() },
-                new LikeDAL { LikeId = Guid.NewGuid().ToString(), TimelinePostId = timelinePostId, UserId = Guid.NewGuid().ToString() },
-                new LikeDAL { LikeId = Guid.NewGuid().ToString(), TimelinePostId = timelinePostId, UserId = Guid.NewGuid().ToString() },
+                new LikeDAL { LikeId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL(), User = new User() },
+                new LikeDAL { LikeId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL(), User = new User() },
+                new LikeDAL { LikeId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL(), User = new User() },
+                new LikeDAL { LikeId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL(), User = new User() },
             };
 
             User user = new User();
@@ -334,10 +333,10 @@ namespace UnitTests.Services
 
             List<CommentDAL> testComments = new List<CommentDAL>()
             {
-                new CommentDAL { CommentId = Guid.NewGuid().ToString(), TimelinePostId = timelinePostId },
-                new CommentDAL { CommentId = Guid.NewGuid().ToString(), TimelinePostId = timelinePostId },
-                new CommentDAL { CommentId = Guid.NewGuid().ToString(), TimelinePostId = timelinePostId },
-                new CommentDAL { CommentId = Guid.NewGuid().ToString(), TimelinePostId = timelinePostId },
+                new CommentDAL { CommentId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL() },
+                new CommentDAL { CommentId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL() },
+                new CommentDAL { CommentId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL() },
+                new CommentDAL { CommentId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL() },
             };
 
             _commentDbMock.Setup(x => x.GetCommentsOnPost(timelinePostId, limit, offset))

@@ -12,10 +12,10 @@ namespace Domains.DAL
         public string NotificationId { get; set; }
 
         [MaxLength(450)]
-        public string UserId { get; set; }
+        public string UserSenderId { get; set; }
 
         [MaxLength(450)]
-        public string ToUser { get; set; }
+        public virtual User ToUser { get; set; }
         public NotificationTypes NotificationType { get; set; }
         public DateTime TimeOfNotification { get; set; }
 

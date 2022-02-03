@@ -24,18 +24,22 @@ namespace Domains
         [Required]
         [MaxLength(450)]
         [OpenApiProperty(Description = "Gets or sets the challenge id of the subscribed challenge")]
-        public string ChallengeId { get; set; }
+        public virtual Challenge Challenge { get; set; }
 
         [Required]
         [OpenApiProperty(Description = "Gets or sets the subscribed challenge progress")]
         public ChallengeProgress ChallengeProgress { get; set; }
 
-        public SubscribedChallenge(string challengeId)
+        public virtual User User { get; set; }
+
+        public SubscribedChallenge(Challenge challenge)
         {
             SubscribedChallengeId = Guid.NewGuid().ToString();
-            ChallengeId = challengeId;
+            Challenge = challenge;
             ChallengeProgress = ChallengeProgress.InProgress;
         }
+
+        public SubscribedChallenge() { }
     }
 
     public class SubscribedChallengeExample : OpenApiExample<SubscribedChallenge>
@@ -45,7 +49,7 @@ namespace Domains
             Examples.Add(OpenApiExampleResolver.Resolve(
                 "Subscribed Challenge Example",
                 new SubscribedChallenge(
-                    Guid.NewGuid().ToString()
+                    new Challenge()
                     )));
             return this;
         }

@@ -121,7 +121,7 @@ namespace Infrastructure.Context
             ChallengeProgress progress = ChallengeProgress.NotSubscribed;
             foreach (SubscribedChallenge challenge in user.SubscribedChallenges)
             {
-                if (challenge.ChallengeId == challengeId)
+                if (challenge.Challenge.ChallengeId == challengeId)
                     progress = challenge.ChallengeProgress;
             }
 
@@ -173,12 +173,14 @@ namespace Infrastructure.Context
                                                 .Include(u => u.SubscribedChallenges)
                                                 .FirstOrDefaultAsync(u => u.UserId == currentUserId);
 
-                foreach (SubscribedChallenge challenge in user.SubscribedChallenges)
+                foreach (SubscribedChallenge subChallenge in user.SubscribedChallenges)
                 {
-                    if (challenge.ChallengeId == challengeId)
+                    if (subChallenge.Challenge.ChallengeId == challengeId)
                         throw new Exception("User is already subscribed to challenge");
                 }
-                user.SubscribedChallenges.Add(new SubscribedChallenge(challengeId));
+
+                Challenge challenge = await GetChallenge(challengeId);
+                user.SubscribedChallenges.Add(new SubscribedChallenge(challenge));
 
                 await _dbContext.SaveChangesAsync();
             }
@@ -200,7 +202,7 @@ namespace Infrastructure.Context
                 
                 foreach (SubscribedChallenge challenge in user.SubscribedChallenges)
                 {
-                    if (challenge.ChallengeId == challengeId)
+                    if (challenge.Challenge.ChallengeId == challengeId)
                     {
                         challenge.ChallengeProgress = progress;
                         await _dbContext.SaveChangesAsync();

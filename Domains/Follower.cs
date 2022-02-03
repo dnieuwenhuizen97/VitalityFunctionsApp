@@ -12,18 +12,24 @@ namespace Domains
     public class Follower
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         [OpenApiProperty(Description = "Gets or sets the follower id")]
         public string FollowerId { get; set; }
 
         [MaxLength(450)]
-        [OpenApiProperty(Description = "Gets or sets the userFollower id")]
-        public string UserFollowerId { get; set; }
+        public virtual User FollowedUser { get; set; }
 
-        public Follower(string UserFollowerId)
+        [MaxLength(450)]
+        [OpenApiProperty(Description = "Gets or sets the userFollower id")]
+        public string UserFollower { get; set; }
+
+        public Follower(string userFollower, User followedUser)
         {
-            this.FollowerId = Guid.NewGuid().ToString();
-            this.UserFollowerId = UserFollowerId;
+            this.UserFollower = userFollower;
+            this.FollowedUser = followedUser;
         }
+
+        public Follower() { }
     }
 
     public class FollowerExample : OpenApiExample<Follower>
@@ -33,7 +39,8 @@ namespace Domains
             Examples.Add(OpenApiExampleResolver.Resolve(
                 "Follower Example",
                 new Follower(
-                    Guid.NewGuid().ToString()
+                    Guid.NewGuid().ToString(),
+                    new User()
                     )));
             return this;
         }

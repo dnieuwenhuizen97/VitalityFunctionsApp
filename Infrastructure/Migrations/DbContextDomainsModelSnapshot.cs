@@ -73,17 +73,19 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("TimelinePostId")
-                        .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
-                        .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("CommentId");
+
+                    b.HasIndex("TimelinePostId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Comments");
                 });
@@ -95,14 +97,16 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("TimelinePostId")
-                        .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserId")
-                        .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("LikeId");
+
+                    b.HasIndex("TimelinePostId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Likes");
                 });
@@ -127,15 +131,16 @@ namespace Infrastructure.Migrations
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ToUser")
-                        .HasMaxLength(450)
+                    b.Property<string>("ToUserUserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("UserSenderId")
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("NotificationId");
+
+                    b.HasIndex("ToUserUserId");
 
                     b.ToTable("Notifications");
                 });
@@ -179,7 +184,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("UserId")
-                        .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Video")
@@ -188,24 +192,27 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("TimelinePostId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("TimelinePosts");
                 });
 
             modelBuilder.Entity("Domains.Follower", b =>
                 {
                     b.Property<string>("FollowerId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("UserFollowerId")
+                    b.Property<string>("FollowedUserUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserFollower")
                         .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("FollowerId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("FollowedUserUserId");
 
                     b.ToTable("Follower");
                 });
@@ -217,7 +224,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("ChallengeId")
                         .IsRequired()
-                        .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("ChallengeProgress")
@@ -227,6 +233,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("SubscribedChallengeId");
+
+                    b.HasIndex("ChallengeId");
 
                     b.HasIndex("UserId");
 
@@ -306,25 +314,113 @@ namespace Infrastructure.Migrations
                     b.ToTable("RecoveryTokens");
                 });
 
+            modelBuilder.Entity("Domains.DAL.CommentDAL", b =>
+                {
+                    b.HasOne("Domains.DAL.TimelinePostDAL", "TimelinePost")
+                        .WithMany("Comments")
+                        .HasForeignKey("TimelinePostId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Domains.User", "User")
+                        .WithMany("Comments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("TimelinePost");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domains.DAL.LikeDAL", b =>
+                {
+                    b.HasOne("Domains.DAL.TimelinePostDAL", "TimelinePost")
+                        .WithMany("Likes")
+                        .HasForeignKey("TimelinePostId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Domains.User", "User")
+                        .WithMany("Likes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("TimelinePost");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domains.DAL.NotificationDAL", b =>
+                {
+                    b.HasOne("Domains.User", "ToUser")
+                        .WithMany("Notifications")
+                        .HasForeignKey("ToUserUserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("ToUser");
+                });
+
+            modelBuilder.Entity("Domains.DAL.TimelinePostDAL", b =>
+                {
+                    b.HasOne("Domains.User", "User")
+                        .WithMany("TimelinePosts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Domains.Follower", b =>
                 {
-                    b.HasOne("Domains.User", null)
+                    b.HasOne("Domains.User", "FollowedUser")
                         .WithMany("Followers")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("FollowedUserUserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("FollowedUser");
                 });
 
             modelBuilder.Entity("Domains.SubscribedChallenge", b =>
                 {
-                    b.HasOne("Domains.User", null)
+                    b.HasOne("Domains.Challenge", "Challenge")
                         .WithMany("SubscribedChallenges")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("ChallengeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domains.User", "User")
+                        .WithMany("SubscribedChallenges")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Challenge");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domains.Challenge", b =>
+                {
+                    b.Navigation("SubscribedChallenges");
+                });
+
+            modelBuilder.Entity("Domains.DAL.TimelinePostDAL", b =>
+                {
+                    b.Navigation("Comments");
+
+                    b.Navigation("Likes");
                 });
 
             modelBuilder.Entity("Domains.User", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Followers");
 
+                    b.Navigation("Likes");
+
+                    b.Navigation("Notifications");
+
                     b.Navigation("SubscribedChallenges");
+
+                    b.Navigation("TimelinePosts");
                 });
 #pragma warning restore 612, 618
         }

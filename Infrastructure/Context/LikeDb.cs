@@ -30,7 +30,7 @@ namespace Infrastructure.Context
             {
                 var likersIds = await _dbContext.Likes
                                                       .AsQueryable()
-                                                      .Where(x => x.TimelinePostId == timelinePostId)
+                                                      .Where(x => x.TimelinePost.TimelinePostId == timelinePostId)
                                                       .Skip(offset)
                                                       .Take(limit)
                                                       .ToListAsync();
@@ -47,7 +47,7 @@ namespace Infrastructure.Context
         {
             List<LikeDAL> likes = await _dbContext.Likes
                                                     .AsQueryable()
-                                                    .Where(l => l.TimelinePostId == timelinePostId)
+                                                    .Where(l => l.TimelinePost.TimelinePostId == timelinePostId)
                                                     .ToListAsync();
 
             return likes.Count;
@@ -70,12 +70,12 @@ namespace Infrastructure.Context
         {
             List<LikeDAL> likesToCheck = await _dbContext.Likes
                                                     .AsQueryable()
-                                                    .Where(l => l.TimelinePostId == timelinePostId)
+                                                    .Where(l => l.TimelinePost.TimelinePostId == timelinePostId)
                                                     .ToListAsync();
 
             foreach (LikeDAL likeDAL in likesToCheck)
             {
-                if (likeDAL.UserId == currentUserId)
+                if (likeDAL.User.UserId == currentUserId)
                     return true;
             }
 
@@ -89,8 +89,8 @@ namespace Infrastructure.Context
             {
                 var timelinePostLike = await _dbContext.Likes
                                                         .AsQueryable()
-                                                        .Where(x => x.TimelinePostId == timelinePostId)
-                                                        .Where(x => x.UserId == userId)
+                                                        .Where(x => x.TimelinePost.TimelinePostId == timelinePostId)
+                                                        .Where(x => x.User.UserId == userId)
                                                         .FirstOrDefaultAsync();
 
                 if (timelinePostLike is null) throw new DbUpdateException();

@@ -13,7 +13,7 @@ namespace Domains.Helpers
         {
             return new FollowerDTO
             {
-                UserFollowerId = follower.UserFollowerId
+                UserFollowerId = follower.UserFollower
             };
         }
 
@@ -23,7 +23,7 @@ namespace Domains.Helpers
 
             foreach (Follower f in followers)
             {
-                followerDTOs.Add(new FollowerDTO { UserFollowerId = f.UserFollowerId });
+                followerDTOs.Add(new FollowerDTO { UserFollowerId = f.UserFollower });
             }
 
             return followerDTOs;

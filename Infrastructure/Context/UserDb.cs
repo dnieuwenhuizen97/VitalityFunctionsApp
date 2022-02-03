@@ -122,25 +122,28 @@ namespace Infrastructure.Context
         {
             User userToUpdate = await FindUserWithFollowers(user);
 
+            User currentUser = await _dbContext.Users.FindAsync(id);
+
             foreach (Follower follower in userToUpdate.Followers)
             {
-                if (follower.UserFollowerId == id)
+                if (follower.UserFollower == currentUser.UserId)
                     throw new InvalidOperationException("The given user is already being followed by the current user");
             }
+            Follower newFollower = new Follower { UserFollower = currentUser.UserId, FollowedUser = user };
 
-            userToUpdate.Followers.Add(new Follower(id));
+            userToUpdate.Followers.Add(newFollower);
 
-
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task RemoveUserFollowers(User user, string id)
         {
             User userToUpdate = await FindUserWithFollowers(user);
+            User currentUser = await _dbContext.Users.FindAsync(id);
 
             foreach (Follower follower in userToUpdate.Followers)
             {
-                if (follower.UserFollowerId == id)
+                if (follower.UserFollower == currentUser.UserId)
                 {
                     userToUpdate.Followers.Remove(follower);
                     _dbContext.SaveChanges();
@@ -235,6 +238,23 @@ namespace Infrastructure.Context
         public async Task DeleteUserById(string userId)
         {
             User user = await _dbContext.Users.FindAsync(userId);
+
+            List<User> users = await _dbContext.Users
+                                                    .AsQueryable()
+                                                    .Include(x => x.Followers)
+                                                    .ToListAsync();
+
+            foreach (User u in users)
+            {
+                if (u.UserId != userId)
+                {
+                    foreach (Follower follower in u.Followers)
+                    {
+                        if (follower.UserFollower == userId)
+                            u.Followers.Remove(follower);
+                    }
+                }
+            }
 
             _dbContext.Remove(user);
             await _dbContext.SaveChangesAsync();

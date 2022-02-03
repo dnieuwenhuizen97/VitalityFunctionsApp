@@ -10,10 +10,10 @@ namespace Domains.DAL
         public string LikeId { get; set; }
 
         [MaxLength(450)]
-        public string TimelinePostId { get; set; }
+        public virtual TimelinePostDAL TimelinePost { get; set; }
 
         [MaxLength(450)]
-        public string UserId { get; set; }
+        public virtual User User { get; set; }
 
         public LikeDAL()
         {

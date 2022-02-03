@@ -1,4 +1,5 @@
-﻿using Domains.DAL;
+﻿using Domains;
+using Domains.DAL;
 using Domains.Enums;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace Infrastructure.Context.Interfaces
         Task<PushTokenDAL> GetPushTokensByUserId(string userId, DeviceType type);
         Task<PushTokenDAL> CreatePushToken(string userId, DeviceType type);
         Task<List<PushTokenDAL>> UpdatePushToken(string userId, bool IsTurnedOn);
-        Task DeletePushToken(string userId, string pushTokenId);
+        Task DeletePushToken(User user, string pushTokenId);
 
     }
 }

@@ -13,7 +13,7 @@ namespace Domains.Helpers
         {
             return new SubscribedChallengeDTO
             {
-                ChallengeId = challenge.ChallengeId,
+                ChallengeId = challenge.Challenge.ChallengeId,
                 ChallengeProgress = challenge.ChallengeProgress
             };
         }
