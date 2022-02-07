@@ -119,13 +119,19 @@ namespace Services
 
         public async Task UpdateUser(string currentUserId, UserUpdatePropertiesDTO userToUpdate)
         {
+            User currentUser = UserDb.FindUserById(currentUserId);
+            string oldProfilePicture = currentUser.ProfilePicture;
+
             if (userToUpdate.Image is not null)
             {
                 if (userToUpdate.Image.FileName.EndsWith(".jpg") || userToUpdate.Image.FileName.EndsWith(".jpeg") || userToUpdate.Image.FileName.EndsWith(".png"))
                 {
-                    Logger.LogError("image of correct format");
-                    await BlobStorageService.UploadImage($"ProfilePic:{currentUserId}", userToUpdate.Image.Data);
-                    await UpdateProfilePicture(currentUserId);
+                    string imageName = $"ProfilePic:{currentUserId}:{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
+                    await BlobStorageService.UploadImage(imageName, userToUpdate.Image.Data);
+                    await UpdateProfilePicture(currentUserId, imageName);
+
+                    if (oldProfilePicture != null)
+                        await BlobStorageService.DeleteImage(oldProfilePicture);
                 } else
                 {
                     Logger.LogError("Image not of corrent format: " + userToUpdate.Image.ContentType);
@@ -134,9 +140,9 @@ namespace Services
             await UserDb.UpdateUserProperties(currentUserId, userToUpdate);
         }
 
-        public async Task UpdateProfilePicture(string userId)
+        public async Task UpdateProfilePicture(string userId, string imageName)
         {
-            string profilePictureUrl = await BlobStorageService.GetImage($"ProfilePic:{userId}");
+            string profilePictureUrl = await BlobStorageService.GetImage(imageName);
 
             await UserDb.UpdateUserProfilePicture(userId, profilePictureUrl);
         }

@@ -19,7 +19,7 @@ namespace Services.Interfaces
         Task RegisterToChallenge(string challengeId, string currentUserId);
         Task<ChallengeDTO> DeleteChallenge(string challengeId);
         Task<string> UpdateChallengeProgress(string challengeId, ChallengeProgress challengeProgress, string currentUserId);
-        Task UpdateChallengeImage(string challengeId);
-        Task UpdateChallengeVideo(string challengeId);
+        Task UpdateChallengeImage(string challengeId, string imageName, StreamContentDTO image);
+        Task UpdateChallengeVideo(string challengeId, string videoName, StreamContentDTO video);
     }
 }

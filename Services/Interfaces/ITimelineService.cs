@@ -17,7 +17,7 @@ namespace Services.Interfaces
         Task<bool> DeletePost(string timelinePostId, string currentUserId);
         Task<List<LikeDTO>> GetLikersOnPost(string timelinePostId, int limit, int offset);
         Task<List<CommentOfUserDTO>> GetCommentsOnPost(string timelinePostId, int limit, int offset);
-        Task UpdateTimelinePostImage(string timelinePostId, string currentUserId);
-        Task UpdateTimelinePostVideo(string timelinePostId, string currentUserId);
+        Task UpdateTimelinePostImage(string timelinePostId, string currentUserId, string imageName);
+        Task UpdateTimelinePostVideo(string timelinePostId, string currentUserId, string videoName);
     }
 }

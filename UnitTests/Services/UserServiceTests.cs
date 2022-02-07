@@ -426,7 +426,7 @@ namespace UnitTests.Services
                 .Returns(user);
 
             // Act
-            await _userService.UpdateProfilePicture(userId);
+            await _userService.UpdateProfilePicture(userId, imageUrl);
             User updatedUser = _userService.GetUserById(userId);
 
             // Assert

@@ -207,16 +207,32 @@ namespace Services
             }
         }
 
-        public async Task UpdateChallengeImage(string challengeId)
+        public async Task UpdateChallengeImage(string challengeId, string imageName, StreamContentDTO image)
         {
-            string imageUrl = await BlobStorageService.GetImage($"ChallengePic:{challengeId}");
+            Challenge challenge = await _dbChallenge.GetChallenge(challengeId);
+            string oldImage = challenge.ImageLink;
+
+            await BlobStorageService.UploadImage(imageName, image.Data);
+
+            if (oldImage != null)
+                await BlobStorageService.DeleteImage(oldImage);
+
+            string imageUrl = await BlobStorageService.GetImage(imageName);
 
             await _dbChallenge.UpdateChallengeImage(challengeId, imageUrl);
         }
 
-        public async Task UpdateChallengeVideo(string challengeId)
+        public async Task UpdateChallengeVideo(string challengeId, string videoName, StreamContentDTO video)
         {
-            string videoUrl = await BlobStorageService.GetVideo($"ChallengeVid:{challengeId}");
+            Challenge challenge = await _dbChallenge.GetChallenge(challengeId);
+            string oldVideo = challenge.VideoLink;
+
+            await BlobStorageService.UploadVideo(videoName, video.Data);
+
+            if (oldVideo != null)
+                await BlobStorageService.DeleteVideo(oldVideo);
+
+            string videoUrl = await BlobStorageService.GetVideo(videoName);
 
             await _dbChallenge.updateChallengeVideo(challengeId, videoUrl);
         }

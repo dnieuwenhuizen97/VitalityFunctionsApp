@@ -326,9 +326,9 @@ namespace InhollandVitalityApp.Controllers
                     return response;
                 }
 
-                var result = await BlobStorageService.UploadImage($"ChallengePic:{challengeId}", image.Data);
+                string imageName = $"ChallengePic:{challengeId}:{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
 
-                await _challengeService.UpdateChallengeImage(challengeId);
+                await _challengeService.UpdateChallengeImage(challengeId, imageName, image);
 
                 response = req.CreateResponse(HttpStatusCode.OK);
                 return response;
@@ -371,9 +371,9 @@ namespace InhollandVitalityApp.Controllers
                     return response;
                 }
 
-                var result = await BlobStorageService.UploadVideo($"ChallengeVid:{challengeId}", video.Data);
+                string videoName = $"ChallengeVid:{challengeId}:{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
 
-                await _challengeService.UpdateChallengeVideo(challengeId);
+                await _challengeService.UpdateChallengeVideo(challengeId, videoName, video);
 
                 response = req.CreateResponse(HttpStatusCode.OK);
                 return response;

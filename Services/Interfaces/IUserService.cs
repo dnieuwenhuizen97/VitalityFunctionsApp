@@ -18,7 +18,7 @@ namespace Services.Interfaces
         Task<UserDTO> FollowUserById(string currentUserId, string userId, bool following);
         Task<List<UserSearchDTO>> GetUsersByName(string name, string currentUserId, int limit, int offset);
         Task UpdateUser(string currentUserId, UserUpdatePropertiesDTO userToUpdate);
-        Task UpdateProfilePicture(string userId);
+        Task UpdateProfilePicture(string userId, string imageName);
         Task UpdateUserTotalPoints(string userId, int points);
         Task<List<ScoreboardUserDTO>> GetAllUsersArrangedByPoints(int limit, int offset);
         Task<UserDTO> DeleteUserById(string userId);
