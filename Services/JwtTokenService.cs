@@ -124,13 +124,17 @@ namespace Services
 
         public async Task<string> CreateRefreshToken(User user)
         {
-            RefreshToken refreshToken = new RefreshToken
+            if (user != null)
             {
-                UserId = user.UserId,
-                ExpireDate = DateTime.UtcNow.AddDays(30)
-            };
+                RefreshToken refreshToken = new RefreshToken
+                {
+                    UserId = user.UserId,
+                    ExpireDate = DateTime.UtcNow.AddDays(30)
+                };
 
-            return Base64EncodeObject(refreshToken);
+                return Base64EncodeObject(refreshToken);
+            }
+            throw new Exception("Invalid token used");
         }
 
         public static string Base64EncodeObject(RefreshToken token)

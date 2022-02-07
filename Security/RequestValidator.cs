@@ -6,16 +6,25 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Security.Interfaces;
 using Domains.Enums;
+using Services.Interfaces;
 
 namespace Security
 {
     public class RequestValidator : IRequestValidator
     {
+        private IUserService _userService { get; }
+
+        public RequestValidator(IUserService userService)
+        {
+            this._userService = userService;
+        }
+
         public async Task<HttpResponseData> ValidateRequest(HttpRequestData Req, FunctionContext ExecutionContext, string RoleType, Func<ClaimsPrincipal, Task<HttpResponseData>> Delegate)
         {
             try
             {
                 ClaimsPrincipal User = GetJwtData(ExecutionContext, RoleType);
+                string userId = User.FindFirst(ClaimTypes.Sid).Value;
                 HttpResponseData Response = Req.CreateResponse(HttpStatusCode.Forbidden);
 
                 if ((User.IsInRole(UserType.User.ToString()) && RoleType == UserType.Admin.ToString()))
@@ -23,7 +32,7 @@ namespace Security
                     return Response;
                 }
 
-                if (User.IsInRole(UserType.User.ToString()) || User.IsInRole(UserType.Admin.ToString()))
+                if ((User.IsInRole(UserType.User.ToString()) || User.IsInRole(UserType.Admin.ToString())) && _userService.GetUserById(userId) != null)
                 {
                     try
                     {
