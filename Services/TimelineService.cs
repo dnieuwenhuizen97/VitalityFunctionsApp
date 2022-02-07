@@ -48,20 +48,22 @@ namespace Services
             {
                 if (request.ImagesAndVideos.Count > 0 || request.ImagesAndVideos is not null)
                 {
-                    var image = request.ImagesAndVideos.FirstOrDefault(x => x.ContentType == "image/jpeg");
+                    var image = request.ImagesAndVideos.FirstOrDefault(x => x.ContentType.Contains("image/"));
                     if (image is not null && (image.FileName.EndsWith(".jpg") || image.FileName.EndsWith(".png")))
                     {
-                        await _blobstorageService.UploadImage($"TimelinePostPic:{timelineDAL.TimelinePostId}", image.Data);
-                        // needed to set the PictureUrl to the new created post.
-                        await UpdateTimelinePostImage(timelineDAL.TimelinePostId, currentUserId);
+                        string imageName = $"TimelinePostPic:{timelineDAL.TimelinePostId}:{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
+                        await _blobstorageService.UploadImage(imageName, image.Data);
+
+                        await UpdateTimelinePostImage(timelineDAL.TimelinePostId, currentUserId, imageName);
                     }
 
-                    var video = request.ImagesAndVideos.FirstOrDefault(x => x.ContentType == "video/mp4");
+                    var video = request.ImagesAndVideos.FirstOrDefault(x => x.ContentType.Contains("video/"));
                     if (video is not null && (video.FileName.EndsWith(".mp4") || video.FileName.EndsWith(".mov")))
                     {
-                        await _blobstorageService.UploadVideo($"TimelinePostVid:{timelineDAL.TimelinePostId}", video.Data);
-                        // needed to set the VideoUrl to the new created post.
-                        await UpdateTimelinePostVideo(timelineDAL.TimelinePostId, timelineDAL.User.UserId);
+                        string videoName = $"TimelinePostVid:{timelineDAL.TimelinePostId}:{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
+                        await _blobstorageService.UploadVideo(videoName, video.Data);
+                        
+                        await UpdateTimelinePostVideo(timelineDAL.TimelinePostId, timelineDAL.User.UserId, videoName);
                     }
                 }
             }
@@ -251,26 +253,26 @@ namespace Services
             return commenters;
         }
 
-        public async Task UpdateTimelinePostImage(string timelinePostId, string currentUserId)
+        public async Task UpdateTimelinePostImage(string timelinePostId, string currentUserId, string imageName)
         {
             TimelinePostDAL timelinePost = await _timelineDb.GetTimelinePostById(timelinePostId);
 
             if (timelinePost.User.UserId != currentUserId)
                 throw new Exception("User can only upload an image for it's own posts");
 
-            string imageUrl = await _blobstorageService.GetImage($"TimelinePostPic:{timelinePostId}");
+            string imageUrl = await _blobstorageService.GetImage(imageName);
 
             await _timelineDb.UpdatePostImage(timelinePostId, imageUrl);
         }
 
-        public async Task UpdateTimelinePostVideo(string timelinePostId, string currentUserId)
+        public async Task UpdateTimelinePostVideo(string timelinePostId, string currentUserId, string videoName)
         {
             TimelinePostDAL timelinePost = await _timelineDb.GetTimelinePostById(timelinePostId);
 
             if (timelinePost.User.UserId != currentUserId)
                 throw new Exception("User can only upload a video for it's own posts");
 
-            string videoUrl = await _blobstorageService.GetVideo($"TimelinePostVid:{timelinePostId}");
+            string videoUrl = await _blobstorageService.GetVideo(videoName);
 
             await _timelineDb.UpdatePostVideo(timelinePostId, videoUrl);
         }

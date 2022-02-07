@@ -10,35 +10,43 @@ namespace Services
 {
     public class BlobStorageService : IBlobStorageService
     {
-        public IBlobStorage blobStorage_db { get; set; }
+        public IBlobStorage _blobStorageDb { get; set; }
 
         public BlobStorageService(IBlobStorage blobStorage)
         {
-            this.blobStorage_db = blobStorage;
+            this._blobStorageDb = blobStorage;
         }
 
-        public async Task<bool> UploadImage(string imageReferenceName, Stream image)
+        public async Task UploadImage(string imageReferenceName, Stream image)
         {
-            var result = await blobStorage_db.UploadImage(imageReferenceName, image);
-            return result;
+            await _blobStorageDb.UploadImage(imageReferenceName, image);
         }
 
         public async Task<string> GetImage(string imageReferenceName)
         {
-            var result = await blobStorage_db.GetImage(imageReferenceName);
+            var result = await _blobStorageDb.GetImage(imageReferenceName);
             return result;
         }
 
-        public async Task<bool> UploadVideo(string videoRefrenceName, Stream image)
+        public async Task UploadVideo(string videoRefrenceName, Stream image)
         {
-            var result = await blobStorage_db.UploadVideo(videoRefrenceName, image);
-            return result;
+            await _blobStorageDb.UploadVideo(videoRefrenceName, image);
         }
 
         public async Task<string> GetVideo(string videoRefrenceName)
         {
-            var result = await blobStorage_db.GetVideo(videoRefrenceName);
+            var result = await _blobStorageDb.GetVideo(videoRefrenceName);
             return result;
+        }
+
+        public async Task DeleteImage(string imageUrl)
+        {
+            await _blobStorageDb.DeleteImage(imageUrl);
+        }
+
+        public async Task DeleteVideo(string videoUrl)
+        {
+            await _blobStorageDb.DeleteVideo(videoUrl);
         }
     }
 }

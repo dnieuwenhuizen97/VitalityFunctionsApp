@@ -13,8 +13,6 @@ namespace Infrastructure.StorageAccount
 {
     public class BlobStorage : IBlobStorage
     {
-        // TODO : Add file with the configurations for the db connections.
-
         private CloudStorageAccount cloudStorageAccount { get; set; }
         private string connectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
 
@@ -31,15 +29,15 @@ namespace Infrastructure.StorageAccount
             return blobClient.GetContainerReference(containerName);
         }
 
-        public async Task<bool> UploadImage(string imageReferenceName, Stream image)
+        public async Task UploadImage(string imageReferenceName, Stream image)
         {
             try
             {
                 var cloudBlobContainer = GetContainerReference("images");
+                await cloudBlobContainer.CreateIfNotExistsAsync();
                 CloudBlockBlob cBlockBlob = cloudBlobContainer.GetBlockBlobReference(imageReferenceName);
                 cBlockBlob.Properties.ContentType = "image/png";
                 await cBlockBlob.UploadFromStreamAsync(image);
-                return true;
             }
             catch (StorageException ex)
             {
@@ -74,15 +72,15 @@ namespace Infrastructure.StorageAccount
             }
         }
 
-        public async Task<bool> UploadVideo(string videoRefrenceName, Stream video)
+        public async Task UploadVideo(string videoRefrenceName, Stream video)
         {
             try
             {
                 var cloudBlobContainer = GetContainerReference("videos");
+                await cloudBlobContainer.CreateIfNotExistsAsync();
                 CloudBlockBlob cBlockBlob = cloudBlobContainer.GetBlockBlobReference(videoRefrenceName);
                 cBlockBlob.Properties.ContentType = "video/mp4";
                 await cBlockBlob.UploadFromStreamAsync(video);
-                return true;
             }
             catch (StorageException ex)
             {
@@ -106,6 +104,43 @@ namespace Infrastructure.StorageAccount
                 Console.ReadLine();
                 throw;
             }
+        }
+
+        public async Task DeleteImage(string imageUrl)
+        {
+            try
+            {
+                CloudBlobContainer cloudBlobContainer = GetContainerReference("images");
+                string imageName = GetBlobNameFromUrl(imageUrl).Result;
+                CloudBlockBlob cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(imageName);
+                await cloudBlockBlob.DeleteIfExistsAsync();
+            }
+            catch (Exception e)
+            {
+                throw new StorageException(e.Message);
+            }
+        }
+
+        public async Task DeleteVideo(string videoUrl)
+        {
+            try
+            {
+                CloudBlobContainer cloudBlobContainer = GetContainerReference("videos");
+                string videoName = GetBlobNameFromUrl(videoUrl).Result;
+                CloudBlockBlob cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(videoName);
+                await cloudBlockBlob.DeleteIfExistsAsync();
+            }
+            catch (Exception e)
+            {
+                throw new StorageException(e.Message);
+            }
+        }
+
+        private Task<string> GetBlobNameFromUrl(string url)
+        {
+            int index = url.LastIndexOf('/') + 1;
+
+            return Task.FromResult(url.Remove(0, index));
         }
     }
 }

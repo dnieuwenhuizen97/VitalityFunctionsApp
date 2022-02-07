@@ -7,9 +7,11 @@ namespace Services.Interfaces
 {
     public interface IBlobStorageService
     {
-        Task<bool> UploadImage(string imageReferenceName, Stream image);
+        Task UploadImage(string imageReferenceName, Stream image);
         Task<string> GetImage(string imageReferenceName);
-        Task<bool> UploadVideo(string videoRefrenceName, Stream image);
+        Task DeleteImage(string imageUrl);
+        Task UploadVideo(string videoRefrenceName, Stream image);
         Task<string> GetVideo(string videoRefrenceName);
+        Task DeleteVideo(string videoUrl);
     }
 }

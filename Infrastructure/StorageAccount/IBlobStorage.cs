@@ -11,10 +11,12 @@ namespace Infrastructure.StorageAccount
     public interface IBlobStorage
     {
         public CloudBlobContainer GetContainerReference(string containerName);
-        public Task<bool> UploadImage(string imageReferenceName, Stream image);
+        public Task UploadImage(string imageReferenceName, Stream image);
         public Task<string> GetImage(string imageReferenceName);
-        public Task<bool> UploadVideo(string videoRefrenceName, Stream video);
+        public Task DeleteImage(string imageUrl);
+        public Task UploadVideo(string videoRefrenceName, Stream video);
         public Task<string> GetVideo(string videoRefrenceName);
+        public Task DeleteVideo(string videoUrl);
 
     }
 }

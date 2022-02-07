@@ -22,40 +22,6 @@ namespace UnitTests.Services
         }
 
         [Fact]
-        public async Task Upload_Image_Should_Return_True_When_Successful()
-        {
-            // Arrange
-            string imageName = "imagename";
-            Stream image = new MemoryStream();
-
-            _blobDbMock.Setup(x => x.UploadImage(imageName, image))
-                .Returns(Task.FromResult(true));
-
-            // Act
-            bool result = await _blobStorageService.UploadImage(imageName, image);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        [Fact]
-        public async Task Upload_Image_Should_Return_False_When_Unsuccessful()
-        {
-            // Arrange
-            string imageName = "imagename";
-            Stream image = new MemoryStream();
-
-            _blobDbMock.Setup(x => x.UploadImage(imageName, image))
-                .Returns(Task.FromResult(false));
-
-            // Act
-            bool result = await _blobStorageService.UploadImage(imageName, image);
-
-            // Assert
-            Assert.False(result);
-        }
-
-        [Fact]
         public async Task Get_Image_Should_Return_Image_Url_String()
         {
             // Arrange
@@ -88,40 +54,6 @@ namespace UnitTests.Services
 
             // Assert
             Assert.Null(url);
-        }
-
-        [Fact]
-        public async Task Upload_Video_Should_Return_True_When_Successful()
-        {
-            // Arrange
-            string videoName = "videoname";
-            Stream video = new MemoryStream();
-
-            _blobDbMock.Setup(x => x.UploadVideo(videoName, video))
-                .Returns(Task.FromResult(true));
-
-            // Act
-            bool result = await _blobStorageService.UploadVideo(videoName, video);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        [Fact]
-        public async Task Upload_Video_Should_Return_False_When_Unsuccessful()
-        {
-            // Arrange
-            string videoName = "videoname";
-            Stream video = new MemoryStream();
-
-            _blobDbMock.Setup(x => x.UploadVideo(videoName, video))
-                .Returns(Task.FromResult(false));
-
-            // Act
-            bool result = await _blobStorageService.UploadVideo(videoName, video);
-
-            // Assert
-            Assert.False(result);
         }
 
         [Fact]
