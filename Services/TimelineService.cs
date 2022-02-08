@@ -1,15 +1,11 @@
 ﻿using Domains;
-using Domains.DAL;
 using Domains.DTO;
 using Domains.Helpers;
-using Infrastructure.Context;
 using Infrastructure.Context.Interfaces;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Services
@@ -41,8 +37,8 @@ namespace Services
         {
             request.Text = await _inputSanitizationService.SanitizeInput(request.Text);
             User currentUser = _dbUser.FindUserById(currentUserId);
-            TimelinePostDAL timelineDAL = TimelineConversionHelper.ToDAL(request, currentUser);
-            await _timelineDb.CreatePost(timelineDAL);
+            TimelinePost timelinePost = TimelineConversionHelper.ToTimelinePost(request, currentUser);
+            await _timelineDb.CreatePost(timelinePost);
 
             try
             {
@@ -51,19 +47,19 @@ namespace Services
                     var image = request.ImagesAndVideos.FirstOrDefault(x => x.ContentType.Contains("image/"));
                     if (image is not null && (image.FileName.EndsWith(".jpg") || image.FileName.EndsWith(".png")))
                     {
-                        string imageName = $"TimelinePostPic:{timelineDAL.TimelinePostId}:{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
+                        string imageName = $"TimelinePostPic:{timelinePost.TimelinePostId}:{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
                         await _blobstorageService.UploadImage(imageName, image.Data);
 
-                        await UpdateTimelinePostImage(timelineDAL.TimelinePostId, currentUserId, imageName);
+                        await UpdateTimelinePostImage(timelinePost.TimelinePostId, currentUserId, imageName);
                     }
 
                     var video = request.ImagesAndVideos.FirstOrDefault(x => x.ContentType.Contains("video/"));
                     if (video is not null && (video.FileName.EndsWith(".mp4") || video.FileName.EndsWith(".mov")))
                     {
-                        string videoName = $"TimelinePostVid:{timelineDAL.TimelinePostId}:{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
+                        string videoName = $"TimelinePostVid:{timelinePost.TimelinePostId}:{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
                         await _blobstorageService.UploadVideo(videoName, video.Data);
-                        
-                        await UpdateTimelinePostVideo(timelineDAL.TimelinePostId, timelineDAL.User.UserId, videoName);
+
+                        await UpdateTimelinePostVideo(timelinePost.TimelinePostId, timelinePost.User.UserId, videoName);
                     }
                 }
             }
@@ -73,7 +69,7 @@ namespace Services
             }
 
             var timelineDTO = TimelineConversionHelper.ToDTO(
-                                timelineDAL,
+                                timelinePost,
                                 0,
                                 0,
                                 $"{currentUser.Firstname} {currentUser.Lastname}",
@@ -85,9 +81,9 @@ namespace Services
         public async Task<List<TimelinePostDTO>> GetTimelinePosts(int limit, int offset, string currentUserId)
         {
             List<TimelinePostDTO> timelinePostDTOs = new List<TimelinePostDTO>();
-            List<TimelinePostDAL> timelinePosts = await _timelineDb.GetTimelinePosts(limit, offset);
+            List<TimelinePost> timelinePosts = await _timelineDb.GetTimelinePosts(limit, offset);
 
-            foreach (TimelinePostDAL timelinePost in timelinePosts)
+            foreach (TimelinePost timelinePost in timelinePosts)
             {
                 string firstname = "";
                 string lastname = "";
@@ -98,7 +94,7 @@ namespace Services
                     firstname = timelinePostUser.Firstname;
                 if (timelinePostUser.Lastname != null)
                     lastname = timelinePostUser.Lastname;
-                
+
                 if (await _likeDb.LikeExists(timelinePost.TimelinePostId, currentUserId))
                     timelinePost.ILikedPost = true;
                 else timelinePost.ILikedPost = false;
@@ -107,9 +103,9 @@ namespace Services
                 int comments = await _commentDb.GetTotalCommentsOnPost(timelinePost.TimelinePostId);
 
                 timelinePostDTOs.Add(TimelineConversionHelper.ToDTO(
-                                                                timelinePost, 
-                                                                likes, 
-                                                                comments, 
+                                                                timelinePost,
+                                                                likes,
+                                                                comments,
                                                                 $"{firstname} {lastname}",
                                                                 timelinePostUser.ProfilePicture));
             }
@@ -119,7 +115,7 @@ namespace Services
 
         public async Task<TimelinePostDTO> GetTimelinePostById(string id, string currentUserId)
         {
-            TimelinePostDAL timelinePost = await _timelineDb.GetTimelinePostById(id);
+            TimelinePost timelinePost = await _timelineDb.GetTimelinePostById(id);
 
             string firstname = "";
             string lastname = "";
@@ -164,10 +160,10 @@ namespace Services
         {
             request.Text = await _inputSanitizationService.SanitizeInput(request.Text);
             User user = _dbUser.FindUserById(currentUserId);
-            TimelinePostDAL timelinePost = await _timelineDb.GetTimelinePostById(timelinePostId);
+            TimelinePost timelinePost = await _timelineDb.GetTimelinePostById(timelinePostId);
 
-            var commentDAL = TimelineConversionHelper.CommentToDAL(request, timelinePost, user);
-            var comment = await _commentDb.PostComment(commentDAL);
+            Comment commentDAL = TimelineConversionHelper.RequestToComment(request, timelinePost, user);
+            Comment comment = await _commentDb.PostComment(commentDAL);
             var commentDTO = TimelineConversionHelper.CommentToDTO(comment);
 
             await _notificationService.SendNotification(timelinePost.User.UserId, currentUserId, Domains.Enums.NotificationTypes.Comment, timelinePostId);
@@ -183,9 +179,9 @@ namespace Services
                     return false;
 
                 User user = _dbUser.FindUserById(userId);
-                TimelinePostDAL timelinePost = await _timelineDb.GetTimelinePostById(timelinePostId);
+                TimelinePost timelinePost = await _timelineDb.GetTimelinePostById(timelinePostId);
 
-                var likeDAL = new LikeDAL()
+                Like like = new Like()
                 {
                     User = user,
                     TimelinePost = timelinePost
@@ -194,7 +190,7 @@ namespace Services
                 if (await _likeDb.LikeExists(timelinePostId, userId))
                     throw new Exception("User has already liked this post");
 
-                await _likeDb.PutLikeOnPost(likeDAL);
+                await _likeDb.PutLikeOnPost(like);
 
                 await _notificationService.SendNotification(timelinePost.User.UserId, userId, Domains.Enums.NotificationTypes.Like, timelinePostId);
 
@@ -224,7 +220,7 @@ namespace Services
         public async Task<List<LikeDTO>> GetLikersOnPost(string timelinePostId, int limit, int offset)
         {
             // get a list of likes of this post
-            List<LikeDAL> likes = await _likeDb.GetLikersOnPost(timelinePostId, limit, offset);
+            List<Like> likes = await _likeDb.GetLikersOnPost(timelinePostId, limit, offset);
             List<LikeDTO> likers = new List<LikeDTO>();
 
             // retrieve the firstname, lastname and pf picture of the users
@@ -255,7 +251,7 @@ namespace Services
 
         public async Task UpdateTimelinePostImage(string timelinePostId, string currentUserId, string imageName)
         {
-            TimelinePostDAL timelinePost = await _timelineDb.GetTimelinePostById(timelinePostId);
+            TimelinePost timelinePost = await _timelineDb.GetTimelinePostById(timelinePostId);
 
             if (timelinePost.User.UserId != currentUserId)
                 throw new Exception("User can only upload an image for it's own posts");
@@ -267,7 +263,7 @@ namespace Services
 
         public async Task UpdateTimelinePostVideo(string timelinePostId, string currentUserId, string videoName)
         {
-            TimelinePostDAL timelinePost = await _timelineDb.GetTimelinePostById(timelinePostId);
+            TimelinePost timelinePost = await _timelineDb.GetTimelinePostById(timelinePostId);
 
             if (timelinePost.User.UserId != currentUserId)
                 throw new Exception("User can only upload a video for it's own posts");

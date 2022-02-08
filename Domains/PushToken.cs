@@ -4,23 +4,33 @@ using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Resolvers;
 using Newtonsoft.Json.Serialization;
 using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domains
 {
     [OpenApiExample(typeof(PushTokenExample))]
     public class PushToken
     {
-        [OpenApiProperty(Description = "Gets or sets the userId for the PushToken")]
-        public string UserId { get; set; }
-
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         [OpenApiProperty(Description = "Gets or sets the PushTokenId")]
         public string PushTokenId { get; set; }
+
+        [MaxLength(450)]
+        [OpenApiProperty(Description = "Gets or sets the userId for the PushToken")]
+        public string UserId { get; set; }
 
         [OpenApiProperty(Description = "Gets or sets the type of the Device. [Android or iOS]")]
         public DeviceType DeviceType { get; set; }
 
         [OpenApiProperty(Description = "Gets or sets if the user wants to recieve notifications")]
         public bool NotificationEnabled { get; set; }
+
+        public PushToken()
+        {
+
+        }
     }
 
     public class PushTokenExample : OpenApiExample<PushToken>

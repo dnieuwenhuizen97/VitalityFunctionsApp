@@ -1,4 +1,4 @@
-﻿using Domains.DAL;
+﻿using Domains;
 using Infrastructure.Context.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -16,7 +16,7 @@ namespace Infrastructure.Context
             _dbContext = dbContext;
         }
 
-        public async Task<TimelinePostDAL> CreatePost(TimelinePostDAL timelinePost)
+        public async Task<TimelinePost> CreatePost(TimelinePost timelinePost)
         {
             try
             {
@@ -31,12 +31,12 @@ namespace Infrastructure.Context
             return timelinePost;
         }
 
-        public async Task<TimelinePostDAL> GetTimelinePostById(string timelinePostId)
+        public async Task<TimelinePost> GetTimelinePostById(string timelinePostId)
         {
             return await _dbContext.TimelinePosts.FindAsync(timelinePostId);
         }
 
-        public async Task<List<TimelinePostDAL>> GetTimelinePosts(int limit, int offset)
+        public async Task<List<TimelinePost>> GetTimelinePosts(int limit, int offset)
         {
             if (limit > 100)
             {
@@ -45,7 +45,7 @@ namespace Infrastructure.Context
 
             try
             {
-                List<TimelinePostDAL> timelinePosts = await _dbContext.TimelinePosts
+                List<TimelinePost> timelinePosts = await _dbContext.TimelinePosts
                                                                     .AsQueryable()
                                                                     .OrderByDescending(t => t.PublishDate)
                                                                     .Skip(offset) // offset
@@ -84,7 +84,7 @@ namespace Infrastructure.Context
 
         public async Task UpdatePostImage(string timelinePostId, string imageUrl)
         {
-            TimelinePostDAL timelinePost = await _dbContext.TimelinePosts.FindAsync(timelinePostId);
+            TimelinePost timelinePost = await _dbContext.TimelinePosts.FindAsync(timelinePostId);
 
             timelinePost.Image = imageUrl;
 
@@ -93,7 +93,7 @@ namespace Infrastructure.Context
 
         public async Task UpdatePostVideo(string timelinePostId, string videoUrl)
         {
-            TimelinePostDAL timelinePost = await _dbContext.TimelinePosts.FindAsync(timelinePostId);
+            TimelinePost timelinePost = await _dbContext.TimelinePosts.FindAsync(timelinePostId);
 
             timelinePost.Video = videoUrl;
 

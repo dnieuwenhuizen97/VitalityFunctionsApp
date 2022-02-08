@@ -1,14 +1,13 @@
-﻿using Domains.DAL;
-using Domains.DTO;
+﻿using Domains.DTO;
 using System;
 
 namespace Domains.Helpers
 {
     public static class TimelineConversionHelper
     {
-        public static TimelinePostDAL ToDAL(TimelinePostCreationRequest request, User currentUser)
+        public static TimelinePost ToTimelinePost(TimelinePostCreationRequest request, User currentUser)
         {
-            return new TimelinePostDAL
+            return new TimelinePost
             {
                 User = currentUser,
                 PublishDate = DateTime.Now,
@@ -16,7 +15,7 @@ namespace Domains.Helpers
                 ILikedPost = false
             };
         }
-        public static TimelinePostDTO ToDTO(TimelinePostDAL timelinePost, int countOfLikes, int countOfComments, string fullName, string profilePicture)
+        public static TimelinePostDTO ToDTO(TimelinePost timelinePost, int countOfLikes, int countOfComments, string fullName, string profilePicture)
         {
             return new TimelinePostDTO
             {
@@ -34,9 +33,9 @@ namespace Domains.Helpers
             };
         }
 
-        public static CommentDAL CommentToDAL(CommentCreationRequest request, TimelinePostDAL timelinePost, User currentUser)
+        public static Comment RequestToComment(CommentCreationRequest request, TimelinePost timelinePost, User currentUser)
         {
-            return new CommentDAL
+            return new Comment
             {
                 User = currentUser,
                 TimelinePost = timelinePost,
@@ -44,18 +43,18 @@ namespace Domains.Helpers
                 Timestamp = DateTime.Now
             };
         }
-        public static CommentDTO CommentToDTO(CommentDAL commentDAL)
+        public static CommentDTO CommentToDTO(Comment comment)
         {
             return new CommentDTO
             {
-                UserId = commentDAL.User.UserId,
-                TimelinePostId = commentDAL.TimelinePost.TimelinePostId,
-                Text = commentDAL.Text,
+                UserId = comment.User.UserId,
+                TimelinePostId = comment.TimelinePost.TimelinePostId,
+                Text = comment.Text,
                 Timestamp = DateTime.Now
             };
         }
 
-        public static LikeDTO ToLikersDTO(LikeDAL like, User user)
+        public static LikeDTO ToLikersDTO(Like like, User user)
         {
             return new LikeDTO()
             {
@@ -69,7 +68,7 @@ namespace Domains.Helpers
             };
         }
 
-        public static CommentOfUserDTO ToCommentersDTO(CommentDAL comment, User user)
+        public static CommentOfUserDTO ToCommentersDTO(Comment comment, User user)
         {
             return new CommentOfUserDTO()
             {

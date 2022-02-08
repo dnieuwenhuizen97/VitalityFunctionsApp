@@ -1,8 +1,6 @@
 ﻿using Domains;
-using Domains.DAL;
 using Domains.DTO;
 using Domains.Enums;
-using Domains.Helpers;
 using Infrastructure.Context.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -65,7 +63,7 @@ namespace Infrastructure.Context
                                                             .ToListAsync();
 
             return challenges;
-                                                            
+
         }
 
         public async Task<List<Challenge>> GetChallengesGroupedBy(ChallengeType type, int limit, int offset)
@@ -114,7 +112,7 @@ namespace Infrastructure.Context
 
         public async Task<ChallengeProgress> GetChallengeProgress(string currentUserId, string challengeId)
         {
-            User user =  await _dbContext.Users
+            User user = await _dbContext.Users
                                             .Include(u => u.SubscribedChallenges)
                                             .FirstOrDefaultAsync(u => u.UserId == currentUserId);
 
@@ -198,8 +196,8 @@ namespace Infrastructure.Context
                                                 .Include(u => u.SubscribedChallenges)
                                                 .FirstOrDefaultAsync(u => u.UserId == currentUserId);
 
-                
-                
+
+
                 foreach (SubscribedChallenge challenge in user.SubscribedChallenges)
                 {
                     if (challenge.Challenge.ChallengeId == challengeId)

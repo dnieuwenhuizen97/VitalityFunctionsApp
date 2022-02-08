@@ -1,11 +1,10 @@
-﻿using Domains.DAL;
+﻿using Domains;
 using Domains.DTO;
 using Infrastructure.Context.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Context
@@ -18,7 +17,7 @@ namespace Infrastructure.Context
             _dbContext = dbContext;
         }
 
-        public async Task<List<LikeDAL>> GetLikersOnPost(string timelinePostId, int limit, int offset)
+        public async Task<List<Like>> GetLikersOnPost(string timelinePostId, int limit, int offset)
         {
             if (limit > 100)
             {
@@ -45,7 +44,7 @@ namespace Infrastructure.Context
 
         public async Task<int> GetTotalLikesOnPost(string timelinePostId)
         {
-            List<LikeDAL> likes = await _dbContext.Likes
+            List<Like> likes = await _dbContext.Likes
                                                     .AsQueryable()
                                                     .Where(l => l.TimelinePost.TimelinePostId == timelinePostId)
                                                     .ToListAsync();
@@ -53,11 +52,11 @@ namespace Infrastructure.Context
             return likes.Count;
         }
 
-        public async Task PutLikeOnPost(LikeDAL likeDAL)
+        public async Task PutLikeOnPost(Like like)
         {
             try
             {
-                await _dbContext.Likes.AddAsync(likeDAL);
+                await _dbContext.Likes.AddAsync(like);
                 await _dbContext.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -68,14 +67,14 @@ namespace Infrastructure.Context
 
         public async Task<bool> LikeExists(string timelinePostId, string currentUserId)
         {
-            List<LikeDAL> likesToCheck = await _dbContext.Likes
+            List<Like> likesToCheck = await _dbContext.Likes
                                                     .AsQueryable()
                                                     .Where(l => l.TimelinePost.TimelinePostId == timelinePostId)
                                                     .ToListAsync();
 
-            foreach (LikeDAL likeDAL in likesToCheck)
+            foreach (Like like in likesToCheck)
             {
-                if (likeDAL.User.UserId == currentUserId)
+                if (like.User.UserId == currentUserId)
                     return true;
             }
 

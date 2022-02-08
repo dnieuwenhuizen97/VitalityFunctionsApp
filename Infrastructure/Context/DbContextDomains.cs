@@ -1,5 +1,4 @@
 ﻿using Domains;
-using Domains.DAL;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -9,11 +8,11 @@ namespace Infrastructure.Context
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Challenge> Challenges { get; set; }
-        public DbSet<PushTokenDAL> PushTokens { get; set; }
-        public DbSet<TimelinePostDAL> TimelinePosts { get; set; }
-        public DbSet<NotificationDAL> Notifications { get; set; }
-        public DbSet<LikeDAL> Likes { get; set; }
-        public DbSet<CommentDAL> Comments { get; set; }
+        public DbSet<PushToken> PushTokens { get; set; }
+        public DbSet<TimelinePost> TimelinePosts { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Like> Likes { get; set; }
+        public DbSet<Comment> Comments { get; set; }
         public DbSet<UserRecoveryToken> RecoveryTokens { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder dbContextOptionsBuilder)
@@ -56,7 +55,7 @@ namespace Infrastructure.Context
                                             .OnDelete(DeleteBehavior.Cascade);
             });
 
-            modelBuilder.Entity<TimelinePostDAL>(entity =>
+            modelBuilder.Entity<TimelinePost>(entity =>
             {
                 entity.Property(e => e.TimelinePostId).ValueGeneratedOnAdd();
 
@@ -68,7 +67,7 @@ namespace Infrastructure.Context
                                             .OnDelete(DeleteBehavior.NoAction);
             });
 
-            modelBuilder.Entity<NotificationDAL>(entity =>
+            modelBuilder.Entity<Notification>(entity =>
             {
                 entity.Property(e => e.NotificationId).ValueGeneratedOnAdd();
             });
@@ -78,17 +77,17 @@ namespace Infrastructure.Context
                 entity.Property(e => e.FollowerId).ValueGeneratedOnAdd();
             });
 
-            modelBuilder.Entity<PushTokenDAL>(entity =>
+            modelBuilder.Entity<PushToken>(entity =>
             {
                 entity.Property(e => e.PushTokenId).ValueGeneratedOnAdd();
             });
 
-            modelBuilder.Entity<LikeDAL>(entity =>
+            modelBuilder.Entity<Like>(entity =>
             {
                 entity.Property(e => e.LikeId).ValueGeneratedOnAdd();
             });
 
-            modelBuilder.Entity<CommentDAL>(entity =>
+            modelBuilder.Entity<Comment>(entity =>
             {
                 entity.Property(e => e.CommentId).ValueGeneratedOnAdd();
             });
