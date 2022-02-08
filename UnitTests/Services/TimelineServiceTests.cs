@@ -1,5 +1,4 @@
 ﻿using Domains;
-using Domains.DAL;
 using Domains.DTO;
 using Infrastructure.Context.Interfaces;
 using Moq;
@@ -7,8 +6,6 @@ using Services;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -46,7 +43,7 @@ namespace UnitTests.Services
             User currentUser = new User();
             TimelinePostCreationRequest request = new TimelinePostCreationRequest("test post text");
 
-            TimelinePostDAL testTimelinePost = new TimelinePostDAL
+            TimelinePost testTimelinePost = new TimelinePost
             {
                 User = currentUser,
                 Text = request.Text,
@@ -76,12 +73,12 @@ namespace UnitTests.Services
 
             User user = new User { UserId = currentUserId, Firstname = "Dylan", Lastname = "Nieuwenhuizen", ProfilePicture = "picture.png" };
 
-            List<TimelinePostDAL> timelinePosts = new List<TimelinePostDAL>()
+            List<TimelinePost> timelinePosts = new List<TimelinePost>()
             {
-                new TimelinePostDAL { TimelinePostId = Guid.NewGuid().ToString(), User = user, ILikedPost = false },
-                new TimelinePostDAL { TimelinePostId = Guid.NewGuid().ToString(), User = user, ILikedPost = false },
-                new TimelinePostDAL { TimelinePostId = Guid.NewGuid().ToString(), User = user, ILikedPost = false },
-                new TimelinePostDAL { TimelinePostId = Guid.NewGuid().ToString(), User = user, ILikedPost = false },
+                new TimelinePost { TimelinePostId = Guid.NewGuid().ToString(), User = user, ILikedPost = false },
+                new TimelinePost { TimelinePostId = Guid.NewGuid().ToString(), User = user, ILikedPost = false },
+                new TimelinePost { TimelinePostId = Guid.NewGuid().ToString(), User = user, ILikedPost = false },
+                new TimelinePost { TimelinePostId = Guid.NewGuid().ToString(), User = user, ILikedPost = false },
             };
 
             _timelineDbMock.Setup(x => x.GetTimelinePosts(limit, offset))
@@ -144,7 +141,7 @@ namespace UnitTests.Services
             string userId = Guid.NewGuid().ToString();
             string timelinePostId = Guid.NewGuid().ToString();
 
-            TimelinePostDAL timelinePost = new TimelinePostDAL();
+            TimelinePost timelinePost = new TimelinePost();
 
             _userDbMock.Setup(x => x.UserExistsById(userId))
                 .Returns(false);
@@ -163,7 +160,7 @@ namespace UnitTests.Services
             string userId = Guid.NewGuid().ToString();
             string timelinePostId = Guid.NewGuid().ToString();
 
-            TimelinePostDAL timelinePost = new TimelinePostDAL();
+            TimelinePost timelinePost = new TimelinePost();
 
             _userDbMock.Setup(x => x.UserExistsById(userId))
                 .Returns(true);
@@ -224,12 +221,12 @@ namespace UnitTests.Services
             int limit = 5;
             int offset = 0;
 
-            List<LikeDAL> testLikes = new List<LikeDAL>()
+            List<Like> testLikes = new List<Like>()
             {
-                new LikeDAL { LikeId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL(), User = new User() },
-                new LikeDAL { LikeId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL(), User = new User() },
-                new LikeDAL { LikeId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL(), User = new User() },
-                new LikeDAL { LikeId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL(), User = new User() },
+                new Like { LikeId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePost(), User = new User() },
+                new Like { LikeId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePost(), User = new User() },
+                new Like { LikeId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePost(), User = new User() },
+                new Like { LikeId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePost(), User = new User() },
             };
 
             User user = new User();
@@ -257,7 +254,7 @@ namespace UnitTests.Services
             User user = new User();
 
             _likeDbMock.Setup(x => x.GetLikersOnPost(timelinePostId, limit, offset))
-                .Returns(Task.FromResult(new List<LikeDAL>()));
+                .Returns(Task.FromResult(new List<Like>()));
             _userDbMock.Setup(x => x.FindUserById(It.IsAny<string>()))
                 .Returns(user);
 
@@ -280,7 +277,7 @@ namespace UnitTests.Services
             User user = new User();
 
             _commentDbMock.Setup(x => x.GetCommentsOnPost(timelinePostId, limit, offset))
-                .Returns(Task.FromResult(new List<CommentDAL>()));
+                .Returns(Task.FromResult(new List<Comment>()));
             _userDbMock.Setup(x => x.FindUserById(It.IsAny<string>()))
                 .Returns(user);
 

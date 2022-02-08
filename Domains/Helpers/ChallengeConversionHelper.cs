@@ -1,11 +1,5 @@
-﻿using Domains.DAL;
-using Domains.DTO;
+﻿using Domains.DTO;
 using Domains.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domains.Helpers
 {
@@ -48,22 +42,6 @@ namespace Domains.Helpers
             };
         }
 
-        public static Challenge ToDAL(ChallengeDTO challngeDAL)
-        {
-            return new Challenge
-            {
-                Title = challngeDAL.Title,
-                ChallengeType = challngeDAL.ChallengeType,
-                Description = challngeDAL.Description,
-                ImageLink = challngeDAL.ImageLink,
-                VideoLink = challngeDAL.VideoLink,
-                StartDate = challngeDAL.StartDate,
-                EndDate = challngeDAL.EndDate,
-                Location = challngeDAL.Location,
-                Points = challngeDAL.Points
-            };
-        }
-
         public static Challenge RequestToChallenge(ChallengeCreationRequest request)
         {
             return new Challenge
@@ -88,17 +66,5 @@ namespace Domains.Helpers
                 JobTitle = user.JobTitle
             };
         }
-
-        //public static SubscribedUsersDAL SubscriberToDAL(SubscribedUsersDTO x)
-        //{
-        //    return new SubscribedUsersDAL
-        //    {
-        //        UserId = x.UserId,
-        //        Timestamp = x.Timestamp,
-        //        ImageUrl = x.ImageUrl,
-        //        Firstname = x.FullName.Split(' ')[0].ToString(),
-        //        Lastname = x.FullName.Split(' ')[1].ToString()
-        //    };
-        //}
     }
 }

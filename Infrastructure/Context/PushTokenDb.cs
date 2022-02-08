@@ -1,5 +1,4 @@
 ﻿using Domains;
-using Domains.DAL;
 using Domains.Enums;
 using Infrastructure.Context.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +20,7 @@ namespace Infrastructure.Context
 
         public PushTokenDb() { }
 
-        public async Task<PushTokenDAL> GetPushTokensByUserId(string userId, DeviceType type)
+        public async Task<PushToken> GetPushTokensByUserId(string userId, DeviceType type)
         {
             try
             {
@@ -39,9 +38,9 @@ namespace Infrastructure.Context
             }
         }
 
-        public async Task<PushTokenDAL> CreatePushToken(string userId, DeviceType type)
+        public async Task<PushToken> CreatePushToken(string userId, DeviceType type)
         {
-            var pushTokenDAL = new PushTokenDAL()
+            PushToken pushToken = new PushToken()
             {
                 UserId = userId,
                 DeviceType = type,
@@ -50,7 +49,7 @@ namespace Infrastructure.Context
 
             try
             {
-                await _dbContext.PushTokens.AddAsync(pushTokenDAL);
+                await _dbContext.PushTokens.AddAsync(pushToken);
                 await _dbContext.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -58,10 +57,10 @@ namespace Infrastructure.Context
                 throw new Exception(ex.Message);
             }
 
-            return pushTokenDAL;
+            return pushToken;
         }
 
-        public async Task<List<PushTokenDAL>> UpdatePushToken(string userId, bool IsTurnedOn)
+        public async Task<List<PushToken>> UpdatePushToken(string userId, bool IsTurnedOn)
         {
             try
             {

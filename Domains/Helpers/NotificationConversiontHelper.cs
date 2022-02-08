@@ -1,47 +1,46 @@
-﻿using Domains.DAL;
-using Domains.DTO;
+﻿using Domains.DTO;
 
 namespace Domains.Helpers
 {
     public static class NotificationConversiontHelper
     {
 
-        public static PushTokenDTO ToDTO(PushTokenDAL pushTokenDAL)
+        public static PushTokenDTO ToDTO(PushToken pushToken)
         {
             return new PushTokenDTO
             {
-                UserId = pushTokenDAL.UserId,
-                PushTokenId = pushTokenDAL.PushTokenId,
-                DeviceType = pushTokenDAL.DeviceType,
-                NotificationEnabled = pushTokenDAL.NotificationEnabled,
+                UserId = pushToken.UserId,
+                PushTokenId = pushToken.PushTokenId,
+                DeviceType = pushToken.DeviceType,
+                NotificationEnabled = pushToken.NotificationEnabled,
             };
         }
 
 
-        public static NotificationDTO ToDTO(NotificationDAL notificaitonDAL)
+        public static NotificationDTO ToDTO(Notification notification)
         {
             return new NotificationDTO
             {
-                NotificationId = notificaitonDAL.NotificationId,
-                UserId = notificaitonDAL.UserSenderId,
-                ToUser = notificaitonDAL.ToUser.UserId,
-                NotificationType = notificaitonDAL.NotificationType,
-                TimeOfNotification = notificaitonDAL.TimeOfNotification,
-                TimelinePostId = notificaitonDAL.TimelinePostId,
-                challengeId = notificaitonDAL.ChallengeId
+                NotificationId = notification.NotificationId,
+                UserId = notification.UserSenderId,
+                ToUser = notification.ToUser.UserId,
+                NotificationType = notification.NotificationType,
+                TimeOfNotification = notification.TimeOfNotification,
+                TimelinePostId = notification.TimelinePostId,
+                challengeId = notification.ChallengeId
             };
         }
 
-        public static NotificationDAL ToDAL(NotificationDTO notificaitonDTO, User toUser)
+        public static Notification ToNotification(NotificationDTO notificationDTO, User toUser)
         {
-            return new NotificationDAL
+            return new Notification
             {
-                UserSenderId = notificaitonDTO.UserId,
+                UserSenderId = notificationDTO.UserId,
                 ToUser = toUser,
-                NotificationType = notificaitonDTO.NotificationType,
-                TimeOfNotification = notificaitonDTO.TimeOfNotification,
-                TimelinePostId = notificaitonDTO.TimelinePostId,
-                ChallengeId = notificaitonDTO.challengeId
+                NotificationType = notificationDTO.NotificationType,
+                TimeOfNotification = notificationDTO.TimeOfNotification,
+                TimelinePostId = notificationDTO.TimelinePostId,
+                ChallengeId = notificationDTO.challengeId
             };
         }
     }

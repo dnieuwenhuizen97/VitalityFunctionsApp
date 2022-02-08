@@ -30,9 +30,9 @@ namespace Services
         public async Task CreateNotification(NotificationDTO notificationDTO)
         {
             User toUser = _dbUser.FindUserById(notificationDTO.ToUser);
-            var notificationDAL = NotificationConversiontHelper.ToDAL(notificationDTO, toUser);
+            Notification notification = NotificationConversiontHelper.ToNotification(notificationDTO, toUser);
 
-            await _dbNotification.CreateNotification(notificationDAL);
+            await _dbNotification.CreateNotification(notification);
         }
 
         public async Task<PushTokenDTO> CreatePushToken(string userId, DeviceType type)

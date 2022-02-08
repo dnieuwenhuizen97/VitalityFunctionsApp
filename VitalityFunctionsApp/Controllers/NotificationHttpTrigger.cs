@@ -105,7 +105,7 @@ namespace VitalityFunctionsApp.Controllers
         [OpenApiOperation(operationId: "getNotifications", tags: new[] { "notification" }, Summary = "Get all notifications for user", Description = "Returns a list of notifications", Visibility = OpenApiVisibilityType.Important)]
         [OpenApiParameter(name: "limit", In = ParameterLocation.Query, Required = true, Type = typeof(int), Summary = "The limit of determining the pagination", Description = "The limit of determining the pagination", Visibility = OpenApiVisibilityType.Important)]
         [OpenApiParameter(name: "offset", In = ParameterLocation.Query, Required = true, Type = typeof(int), Summary = "The offset of determining the pagination", Description = "The offset of determining the pagination", Visibility = OpenApiVisibilityType.Important)]
-        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(List<Notification>), Summary = "Successful operation", Description = "Successful operation", Example = typeof(List<NotificationExample>))]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(List<NotificationDTO>), Summary = "Successful operation", Description = "Successful operation", Example = typeof(List<NotificationExample>))]
         [UnauthorizedRequest]
         [ForbiddenRequest]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Summary = "Bad request", Description = "Bad request")]

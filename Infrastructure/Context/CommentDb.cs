@@ -1,11 +1,10 @@
-﻿using Domains.DAL;
+﻿using Domains;
 using Domains.DTO;
 using Infrastructure.Context.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Context
@@ -18,7 +17,7 @@ namespace Infrastructure.Context
             _dbContext = dbContext;
         }
 
-        public async Task<List<CommentDAL>> GetCommentsOnPost(string timelinePostId, int limit, int offset)
+        public async Task<List<Comment>> GetCommentsOnPost(string timelinePostId, int limit, int offset)
         {
             if (limit > 100)
             {
@@ -46,7 +45,7 @@ namespace Infrastructure.Context
 
         public async Task<int> GetTotalCommentsOnPost(string timelinePostId)
         {
-            List<CommentDAL> comments = await _dbContext.Comments
+            List<Comment> comments = await _dbContext.Comments
                                                         .AsQueryable()
                                                         .Where(c => c.TimelinePost.TimelinePostId == timelinePostId)
                                                         .ToListAsync();
@@ -54,7 +53,7 @@ namespace Infrastructure.Context
             return comments.Count;
         }
 
-        public async Task<CommentDAL> PostComment(CommentDAL comment)
+        public async Task<Comment> PostComment(Comment comment)
         {
             try
             {
