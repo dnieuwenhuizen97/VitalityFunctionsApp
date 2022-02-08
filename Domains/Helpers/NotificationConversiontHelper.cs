@@ -18,7 +18,7 @@ namespace Domains.Helpers
         }
 
 
-        public static NotificationDTO ToDTO(NotificationDAL notificaitonDAL)
+        public static NotificationDTO ToDTO(Notification notificaitonDAL)
         {
             return new NotificationDTO
             {
@@ -32,9 +32,9 @@ namespace Domains.Helpers
             };
         }
 
-        public static NotificationDAL ToDAL(NotificationDTO notificaitonDTO, User toUser)
+        public static Notification ToDAL(NotificationDTO notificaitonDTO, User toUser)
         {
-            return new NotificationDAL
+            return new Notification
             {
                 UserSenderId = notificaitonDTO.UserId,
                 ToUser = toUser,

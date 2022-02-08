@@ -55,7 +55,7 @@ namespace Domains.Helpers
             };
         }
 
-        public static LikeDTO ToLikersDTO(LikeDAL like, User user)
+        public static LikeDTO ToLikersDTO(Like like, User user)
         {
             return new LikeDTO()
             {

@@ -31,7 +31,7 @@ namespace Domains.DAL
         public string Video { get; set; }
 
         public virtual ICollection<CommentDAL> Comments { get; set; }
-        public virtual ICollection<LikeDAL> Likes { get; set; }
+        public virtual ICollection<Like> Likes { get; set; }
 
         public TimelinePostDAL()
         {

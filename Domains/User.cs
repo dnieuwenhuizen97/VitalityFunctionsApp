@@ -56,8 +56,8 @@ namespace Domains
         public int Points { get; set; }
 
         public virtual ICollection<TimelinePostDAL> TimelinePosts { get; set; }
-        public virtual ICollection<NotificationDAL> Notifications { get; set; }
-        public virtual ICollection<LikeDAL> Likes { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
+        public virtual ICollection<Like> Likes { get; set; }
         public virtual ICollection<CommentDAL> Comments { get; set; }
 
         public User(string userId, string email) : base(userId, email)

@@ -185,7 +185,7 @@ namespace Services
                 User user = _dbUser.FindUserById(userId);
                 TimelinePostDAL timelinePost = await _timelineDb.GetTimelinePostById(timelinePostId);
 
-                var likeDAL = new LikeDAL()
+                var likeDAL = new Like()
                 {
                     User = user,
                     TimelinePost = timelinePost
@@ -224,7 +224,7 @@ namespace Services
         public async Task<List<LikeDTO>> GetLikersOnPost(string timelinePostId, int limit, int offset)
         {
             // get a list of likes of this post
-            List<LikeDAL> likes = await _likeDb.GetLikersOnPost(timelinePostId, limit, offset);
+            List<Like> likes = await _likeDb.GetLikersOnPost(timelinePostId, limit, offset);
             List<LikeDTO> likers = new List<LikeDTO>();
 
             // retrieve the firstname, lastname and pf picture of the users

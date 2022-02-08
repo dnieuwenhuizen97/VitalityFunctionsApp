@@ -224,12 +224,12 @@ namespace UnitTests.Services
             int limit = 5;
             int offset = 0;
 
-            List<LikeDAL> testLikes = new List<LikeDAL>()
+            List<Like> testLikes = new List<Like>()
             {
-                new LikeDAL { LikeId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL(), User = new User() },
-                new LikeDAL { LikeId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL(), User = new User() },
-                new LikeDAL { LikeId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL(), User = new User() },
-                new LikeDAL { LikeId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL(), User = new User() },
+                new Like { LikeId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL(), User = new User() },
+                new Like { LikeId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL(), User = new User() },
+                new Like { LikeId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL(), User = new User() },
+                new Like { LikeId = Guid.NewGuid().ToString(), TimelinePost = new TimelinePostDAL(), User = new User() },
             };
 
             User user = new User();
@@ -257,7 +257,7 @@ namespace UnitTests.Services
             User user = new User();
 
             _likeDbMock.Setup(x => x.GetLikersOnPost(timelinePostId, limit, offset))
-                .Returns(Task.FromResult(new List<LikeDAL>()));
+                .Returns(Task.FromResult(new List<Like>()));
             _userDbMock.Setup(x => x.FindUserById(It.IsAny<string>()))
                 .Returns(user);
 

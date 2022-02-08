@@ -1,4 +1,5 @@
-﻿using Domains.DAL;
+﻿using Domains;
+using Domains.DAL;
 using Domains.DTO;
 using Infrastructure.Context.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,7 @@ namespace Infrastructure.Context
             _dbContext = dbContext;
         }
 
-        public async Task<List<LikeDAL>> GetLikersOnPost(string timelinePostId, int limit, int offset)
+        public async Task<List<Like>> GetLikersOnPost(string timelinePostId, int limit, int offset)
         {
             if (limit > 100)
             {
@@ -45,7 +46,7 @@ namespace Infrastructure.Context
 
         public async Task<int> GetTotalLikesOnPost(string timelinePostId)
         {
-            List<LikeDAL> likes = await _dbContext.Likes
+            List<Like> likes = await _dbContext.Likes
                                                     .AsQueryable()
                                                     .Where(l => l.TimelinePost.TimelinePostId == timelinePostId)
                                                     .ToListAsync();
@@ -53,7 +54,7 @@ namespace Infrastructure.Context
             return likes.Count;
         }
 
-        public async Task PutLikeOnPost(LikeDAL likeDAL)
+        public async Task PutLikeOnPost(Like likeDAL)
         {
             try
             {
@@ -68,12 +69,12 @@ namespace Infrastructure.Context
 
         public async Task<bool> LikeExists(string timelinePostId, string currentUserId)
         {
-            List<LikeDAL> likesToCheck = await _dbContext.Likes
+            List<Like> likesToCheck = await _dbContext.Likes
                                                     .AsQueryable()
                                                     .Where(l => l.TimelinePost.TimelinePostId == timelinePostId)
                                                     .ToListAsync();
 
-            foreach (LikeDAL likeDAL in likesToCheck)
+            foreach (Like likeDAL in likesToCheck)
             {
                 if (likeDAL.User.UserId == currentUserId)
                     return true;

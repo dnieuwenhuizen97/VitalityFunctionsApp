@@ -30,19 +30,19 @@ namespace UnitTests.Db
             int limit = 5;
             int offset = 0;
 
-            List<NotificationDAL> testNotifications = new List<NotificationDAL>()
+            List<Notification> testNotifications = new List<Notification>()
             {
-                new NotificationDAL(),
-                new NotificationDAL(),
-                new NotificationDAL(),
-                new NotificationDAL(),
+                new Notification(),
+                new Notification(),
+                new Notification(),
+                new Notification(),
             };
 
             _notificationDbMock.Setup(x => x.GetNotifications(user, limit, offset))
                 .Returns(Task.FromResult(testNotifications));
 
             // Act
-            List<NotificationDAL> notifications = await _notificationDb.GetNotifications(user, limit, offset);
+            List<Notification> notifications = await _notificationDb.GetNotifications(user, limit, offset);
 
             // Assert
             Assert.NotNull(notifications);
@@ -59,10 +59,10 @@ namespace UnitTests.Db
 
 
             _notificationDbMock.Setup(x => x.GetNotifications(user, limit, offset))
-                .Returns(Task.FromResult(new List<NotificationDAL>()));
+                .Returns(Task.FromResult(new List<Notification>()));
 
             // Act
-            List<NotificationDAL> notifications = await _notificationDb.GetNotifications(user, limit, offset);
+            List<Notification> notifications = await _notificationDb.GetNotifications(user, limit, offset);
 
             // Assert
             Assert.NotNull(notifications);

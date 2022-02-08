@@ -18,7 +18,7 @@ namespace Infrastructure.Context
             _dbContext = dbContext;
         }
 
-        public async Task CreateNotification(NotificationDAL notification) 
+        public async Task CreateNotification(Notification notification) 
         {
             try
             {
@@ -59,14 +59,14 @@ namespace Infrastructure.Context
             
         }
 
-        public async Task<List<NotificationDAL>> GetNotifications(User user, int limit, int offset)
+        public async Task<List<Notification>> GetNotifications(User user, int limit, int offset)
         {
             if (limit > 100)
             {
                 limit = 100;
             }
 
-            var results = new List<NotificationDAL>();
+            var results = new List<Notification>();
             try
             {
                 var notifications = await _dbContext.Notifications

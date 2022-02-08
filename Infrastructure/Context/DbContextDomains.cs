@@ -11,8 +11,8 @@ namespace Infrastructure.Context
         public DbSet<Challenge> Challenges { get; set; }
         public DbSet<PushTokenDAL> PushTokens { get; set; }
         public DbSet<TimelinePostDAL> TimelinePosts { get; set; }
-        public DbSet<NotificationDAL> Notifications { get; set; }
-        public DbSet<LikeDAL> Likes { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Like> Likes { get; set; }
         public DbSet<CommentDAL> Comments { get; set; }
         public DbSet<UserRecoveryToken> RecoveryTokens { get; set; }
 
@@ -68,7 +68,7 @@ namespace Infrastructure.Context
                                             .OnDelete(DeleteBehavior.NoAction);
             });
 
-            modelBuilder.Entity<NotificationDAL>(entity =>
+            modelBuilder.Entity<Notification>(entity =>
             {
                 entity.Property(e => e.NotificationId).ValueGeneratedOnAdd();
             });
@@ -83,7 +83,7 @@ namespace Infrastructure.Context
                 entity.Property(e => e.PushTokenId).ValueGeneratedOnAdd();
             });
 
-            modelBuilder.Entity<LikeDAL>(entity =>
+            modelBuilder.Entity<Like>(entity =>
             {
                 entity.Property(e => e.LikeId).ValueGeneratedOnAdd();
             });
