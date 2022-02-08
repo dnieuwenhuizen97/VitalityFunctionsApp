@@ -1,5 +1,4 @@
 ﻿using Domains;
-using Domains.DAL;
 using Domains.DTO;
 using Domains.Enums;
 using Infrastructure.Context.Interfaces;
@@ -7,8 +6,6 @@ using Moq;
 using Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -33,9 +30,9 @@ namespace UnitTests.Services
             string userId = Guid.NewGuid().ToString();
             DeviceType deviceType = DeviceType.Android;
 
-            PushTokenDAL testPushToken = null;
+            PushToken testPushToken = null;
 
-            PushTokenDAL pushTokenDAL = new PushTokenDAL();
+            PushToken pushTokenDAL = new PushToken();
 
             _userDbMock.Setup(x => x.UserExistsById(userId))
                 .Returns(true);
@@ -58,9 +55,9 @@ namespace UnitTests.Services
             string userId = Guid.NewGuid().ToString();
             DeviceType deviceType = DeviceType.Android;
 
-            PushTokenDAL testPushToken = null;
+            PushToken testPushToken = null;
 
-            PushTokenDAL pushTokenDAL = new PushTokenDAL();
+            PushToken pushTokenDAL = new PushToken();
 
             _userDbMock.Setup(x => x.UserExistsById(userId))
                 .Returns(false);
@@ -83,12 +80,12 @@ namespace UnitTests.Services
             string userId = Guid.NewGuid().ToString();
             bool isTurnedOn = true;
 
-            List<PushTokenDAL> testPushTokens = new List<PushTokenDAL>()
+            List<PushToken> testPushTokens = new List<PushToken>()
             {
-                new PushTokenDAL(),
-                new PushTokenDAL(),
-                new PushTokenDAL(),
-                new PushTokenDAL(),
+                new PushToken(),
+                new PushToken(),
+                new PushToken(),
+                new PushToken(),
             };
 
             _userDbMock.Setup(x => x.UserExistsById(userId))
@@ -115,7 +112,7 @@ namespace UnitTests.Services
             _userDbMock.Setup(x => x.UserExistsById(userId))
                 .Returns(true);
             _pushTokenDbMock.Setup(x => x.UpdatePushToken(userId, isTurnedOn))
-                .Returns(Task.FromResult(new List<PushTokenDAL>()));
+                .Returns(Task.FromResult(new List<PushToken>()));
 
             // Act
             List<PushTokenDTO> pushTokens = await _notificationService.UpdatePushToken(userId, isTurnedOn);
@@ -135,7 +132,7 @@ namespace UnitTests.Services
             _userDbMock.Setup(x => x.UserExistsById(userId))
                 .Returns(false);
             _pushTokenDbMock.Setup(x => x.UpdatePushToken(userId, isTurnedOn))
-                .Returns(Task.FromResult(new List<PushTokenDAL>()));
+                .Returns(Task.FromResult(new List<PushToken>()));
 
             // Act
             List<PushTokenDTO> pushTokens = await _notificationService.UpdatePushToken(userId, isTurnedOn);

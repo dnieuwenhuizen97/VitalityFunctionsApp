@@ -1,12 +1,11 @@
-﻿using Domains.DAL;
-using Domains.DTO;
+﻿using Domains.DTO;
 
 namespace Domains.Helpers
 {
     public static class NotificationConversiontHelper
     {
 
-        public static PushTokenDTO ToDTO(PushTokenDAL pushTokenDAL)
+        public static PushTokenDTO ToDTO(PushToken pushTokenDAL)
         {
             return new PushTokenDTO
             {
@@ -18,7 +17,7 @@ namespace Domains.Helpers
         }
 
 
-        public static NotificationDTO ToDTO(NotificationDAL notificaitonDAL)
+        public static NotificationDTO ToDTO(Notification notificaitonDAL)
         {
             return new NotificationDTO
             {
@@ -32,9 +31,9 @@ namespace Domains.Helpers
             };
         }
 
-        public static NotificationDAL ToDAL(NotificationDTO notificaitonDTO, User toUser)
+        public static Notification ToDAL(NotificationDTO notificaitonDTO, User toUser)
         {
-            return new NotificationDAL
+            return new Notification
             {
                 UserSenderId = notificaitonDTO.UserId,
                 ToUser = toUser,

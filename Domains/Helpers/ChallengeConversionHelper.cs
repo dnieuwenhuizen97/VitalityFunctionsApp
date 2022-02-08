@@ -1,5 +1,4 @@
-﻿using Domains.DAL;
-using Domains.DTO;
+﻿using Domains.DTO;
 using Domains.Enums;
 using System;
 using System.Collections.Generic;

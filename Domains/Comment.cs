@@ -2,16 +2,16 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Domains.DAL
+namespace Domains
 {
-    public class CommentDAL
+    public class Comment
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public string CommentId { get; set; }
 
         [MaxLength(450)]
-        public virtual TimelinePostDAL TimelinePost { get; set; }
+        public virtual TimelinePost TimelinePost { get; set; }
 
         [MaxLength(500)]
         public string Text { get; set; }
@@ -20,7 +20,7 @@ namespace Domains.DAL
         public virtual User User { get; set; }
         public DateTime Timestamp { get; set; }
 
-        public CommentDAL()
+        public Comment()
         {
 
         }

@@ -1,4 +1,4 @@
-﻿using Domains.DAL;
+﻿using Domains;
 using Infrastructure.Context.Interfaces;
 using Moq;
 using System;
@@ -25,7 +25,7 @@ namespace UnitTests.Db
         public async Task Create_Post_Should_Return_Timeline_Post_Object()
         {
             // Arrange
-            TimelinePostDAL testTimelinePost = new TimelinePostDAL
+            TimelinePost testTimelinePost = new TimelinePost
             {
                 TimelinePostId = Guid.NewGuid().ToString()
             };
@@ -34,7 +34,7 @@ namespace UnitTests.Db
                 .Returns(Task.FromResult(testTimelinePost));
 
             // Act
-            TimelinePostDAL timelinePost = await _timelineDb.CreatePost(testTimelinePost);
+            TimelinePost timelinePost = await _timelineDb.CreatePost(testTimelinePost);
 
             // Assert
             Assert.NotNull(timelinePost);
@@ -47,10 +47,10 @@ namespace UnitTests.Db
             string timelinePostId = Guid.NewGuid().ToString();
 
             _timelineDbMock.Setup(x => x.GetTimelinePostById(timelinePostId))
-                .Returns(Task.FromResult(new TimelinePostDAL()));
+                .Returns(Task.FromResult(new TimelinePost()));
 
             // Act
-            TimelinePostDAL timelinePost = await _timelineDb.GetTimelinePostById(timelinePostId);
+            TimelinePost timelinePost = await _timelineDb.GetTimelinePostById(timelinePostId);
 
             // Arrange
             Assert.NotNull(timelinePost);
@@ -62,13 +62,13 @@ namespace UnitTests.Db
             // Arrange
             string timelinePostId = Guid.NewGuid().ToString();
 
-            TimelinePostDAL testTimelinePost = null;
+            TimelinePost testTimelinePost = null;
 
             _timelineDbMock.Setup(x => x.GetTimelinePostById(timelinePostId))
                 .Returns(Task.FromResult(testTimelinePost));
 
             // Act
-            TimelinePostDAL timelinePost = await _timelineDb.GetTimelinePostById(timelinePostId);
+            TimelinePost timelinePost = await _timelineDb.GetTimelinePostById(timelinePostId);
 
             // Arrange
             Assert.Null(timelinePost);
@@ -81,19 +81,19 @@ namespace UnitTests.Db
             int limit = 5;
             int offset = 0;
 
-            List<TimelinePostDAL> testTimelinePosts = new List<TimelinePostDAL>()
+            List<TimelinePost> testTimelinePosts = new List<TimelinePost>()
             {
-                new TimelinePostDAL(),
-                new TimelinePostDAL(),
-                new TimelinePostDAL(),
-                new TimelinePostDAL()
+                new TimelinePost(),
+                new TimelinePost(),
+                new TimelinePost(),
+                new TimelinePost()
             };
 
             _timelineDbMock.Setup(x => x.GetTimelinePosts(limit, offset))
                 .Returns(Task.FromResult(testTimelinePosts));
 
             // Act
-            List<TimelinePostDAL> timelinePosts = await _timelineDb.GetTimelinePosts(limit, offset);
+            List<TimelinePost> timelinePosts = await _timelineDb.GetTimelinePosts(limit, offset);
 
             // Assert
             Assert.NotNull(timelinePosts);
@@ -108,10 +108,10 @@ namespace UnitTests.Db
             int offset = 0;
 
             _timelineDbMock.Setup(x => x.GetTimelinePosts(limit, offset))
-                .Returns(Task.FromResult(new List<TimelinePostDAL>()));
+                .Returns(Task.FromResult(new List<TimelinePost>()));
 
             // Act
-            List<TimelinePostDAL> timelinePosts = await _timelineDb.GetTimelinePosts(limit, offset);
+            List<TimelinePost> timelinePosts = await _timelineDb.GetTimelinePosts(limit, offset);
 
             // Assert
             Assert.NotNull(timelinePosts);

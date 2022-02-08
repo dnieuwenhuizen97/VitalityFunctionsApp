@@ -1,5 +1,4 @@
-﻿using Domains.DAL;
-using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Abstractions;
+﻿using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Abstractions;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Resolvers;
 using Newtonsoft.Json.Serialization;
@@ -55,10 +54,10 @@ namespace Domains
         [OpenApiProperty(Description = "Gets or sets the user's total amount of points")]
         public int Points { get; set; }
 
-        public virtual ICollection<TimelinePostDAL> TimelinePosts { get; set; }
-        public virtual ICollection<NotificationDAL> Notifications { get; set; }
-        public virtual ICollection<LikeDAL> Likes { get; set; }
-        public virtual ICollection<CommentDAL> Comments { get; set; }
+        public virtual ICollection<TimelinePost> TimelinePosts { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
+        public virtual ICollection<Like> Likes { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
 
         public User(string userId, string email) : base(userId, email)
         {
