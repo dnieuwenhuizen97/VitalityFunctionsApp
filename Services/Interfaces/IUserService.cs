@@ -25,6 +25,7 @@ namespace Services.Interfaces
         Task CreateRecoveryToken(string email);
         Task ResetUserPassword(string password, string token);
         Task<bool> IsRecoveryTokenValid(string token);
+        Task DeleteOldRecoveryTokens();
     }
 
 }

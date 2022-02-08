@@ -198,5 +198,10 @@ namespace Services
         {
             return await UserDb.IsRecoveryTokenValid(token);
         }
+
+        public async Task DeleteOldRecoveryTokens()
+        {
+            await UserDb.DeleteOldRecoveryTokens();
+        }
     }
 }

@@ -311,5 +311,26 @@ namespace Infrastructure.Context
             }
             return false;
         }
+
+        public async Task DeleteOldRecoveryTokens()
+        {
+            List<UserRecoveryToken> tokens = await _dbContext.RecoveryTokens
+                                                                        .AsQueryable()
+                                                                        .ToListAsync();
+
+            List<UserRecoveryToken> tokensToRemove = new List<UserRecoveryToken>();
+
+            foreach (UserRecoveryToken recoveryToken in tokens)
+            {
+                if (recoveryToken.TimeCreated < DateTime.Now.AddHours(-24))
+                {
+                    tokensToRemove.Add(recoveryToken);
+                }
+            }
+
+            _dbContext.RemoveRange(tokensToRemove);
+
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }
