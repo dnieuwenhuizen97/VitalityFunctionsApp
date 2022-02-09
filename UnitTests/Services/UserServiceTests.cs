@@ -53,7 +53,7 @@ namespace UnitTests.Services
                 "password");
 
             _userDbMock.Setup(x => x.UserExistsByEmail(registerRequest.Email))
-                .Returns(true);
+                .Returns(Task.FromResult(true));
 
             // Act
             var exception = Assert.Throws<Exception>(() => { _userService.AddUser(registerRequest); });
@@ -76,10 +76,10 @@ namespace UnitTests.Services
             };
 
             _userDbMock.Setup(x => x.FindUserById(userId))
-               .Returns(testUser);
+               .Returns(Task.FromResult(testUser));
 
             // Act
-            User user = _userService.GetUserById(userId);
+            User user = await _userService.GetUserById(userId);
 
 
             // Assert
@@ -94,7 +94,7 @@ namespace UnitTests.Services
                .Returns(() => null);
 
             // Act
-            User user = _userService.GetUserById(Guid.NewGuid().ToString());
+            User user = await _userService.GetUserById(Guid.NewGuid().ToString());
 
 
             // Assert
@@ -124,10 +124,10 @@ namespace UnitTests.Services
             };
 
             _userDbMock.Setup(x => x.FindUserById(userId))
-               .Returns(testUser);
+               .Returns(Task.FromResult(testUser));
 
             // Act
-            UserDTO userDTO = _userService.GetUserDtoById(userId);
+            UserDTO userDTO = await _userService.GetUserDtoById(userId);
 
 
             // Assert
@@ -285,7 +285,7 @@ namespace UnitTests.Services
             };
 
             _userDbMock.Setup(x => x.FindUserById(userToFollowId))
-                .Returns(userToFollow);
+                .Returns(Task.FromResult(userToFollow));
 
             // Act
             UserDTO followedUser = await _userService.FollowUserById(currentUserId, userToFollowId, true);
@@ -312,7 +312,7 @@ namespace UnitTests.Services
             };
 
             _userDbMock.Setup(x => x.FindUserById(currentUserId))
-                .Returns(userToFollow);
+                .Returns(Task.FromResult(userToFollow));
 
             // Act
             var exception = Assert.ThrowsAsync<InvalidOperationException>(async () => { await _userService.FollowUserById(currentUserId, currentUserId, true); });
@@ -398,11 +398,11 @@ namespace UnitTests.Services
 
             _userDbMock.Setup(x => x.UpdateUserProperties(user.UserId, updatedProperties));
             _userDbMock.Setup(x => x.FindUserById(user.UserId))
-                .Returns(userWithUpdatedProperties);
+                .Returns(Task.FromResult(userWithUpdatedProperties));
 
             // Act
             await _userService.UpdateUser(user.UserId, updatedProperties);
-            User updatedUser = _userService.GetUserById(user.UserId);
+            User updatedUser = await _userService.GetUserById(user.UserId);
 
             // Assert
             Assert.Equal(updatedProperties.Firstname, updatedUser.Firstname);
@@ -423,11 +423,11 @@ namespace UnitTests.Services
 
             _userDbMock.Setup(x => x.UpdateUserProfilePicture(userId, imageUrl));
             _userDbMock.Setup(x => x.FindUserById(userId))
-                .Returns(user);
+                .Returns(Task.FromResult(user));
 
             // Act
             await _userService.UpdateProfilePicture(userId, imageUrl);
-            User updatedUser = _userService.GetUserById(userId);
+            User updatedUser = await _userService.GetUserById(userId);
 
             // Assert
             Assert.Equal(imageUrl, updatedUser.ProfilePicture);
@@ -444,11 +444,11 @@ namespace UnitTests.Services
 
             _userDbMock.Setup(x => x.UpdateUserTotalPoints(userId, points));
             _userDbMock.Setup(x => x.FindUserById(userId))
-                .Returns(user);
+                .Returns(Task.FromResult(user));
 
             // Act
             await _userService.UpdateUserTotalPoints(userId, points);
-            User updatedUser = _userService.GetUserById(userId);
+            User updatedUser = await _userService.GetUserById(userId);
 
             // Assert
             Assert.Equal(user.Points, updatedUser.Points);

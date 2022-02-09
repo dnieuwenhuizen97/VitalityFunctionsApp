@@ -95,10 +95,10 @@ namespace UnitTests.Db
             };
 
             _userDbMock.Setup(x => x.FindUserByEmail(email))
-                .Returns(testUser);
+                .Returns(Task.FromResult(testUser));
 
             // Act
-            User user = _userDb.FindUserByEmail(email);
+            User user = await _userDb.FindUserByEmail(email);
 
             // Assert
             Assert.NotNull(user);
@@ -113,7 +113,7 @@ namespace UnitTests.Db
                 .Returns(() => null);
 
             // Act
-            User user = _userDb.FindUserByEmail("dylan.nieuwenhuizen@inholland.nl");
+            User user = await _userDb.FindUserByEmail("dylan.nieuwenhuizen@inholland.nl");
 
             // Assert
             Assert.Null(user);
@@ -130,10 +130,10 @@ namespace UnitTests.Db
             };
 
             _userDbMock.Setup(x => x.FindUserById(testUser.UserId))
-                .Returns(testUser);
+                .Returns(Task.FromResult(testUser));
 
             // Act
-            User user = _userDb.FindUserById(userId);
+            User user = await _userDb.FindUserById(userId);
 
             // Assert
             Assert.NotNull(user);
@@ -148,7 +148,7 @@ namespace UnitTests.Db
                 .Returns(() => null);
 
             // Act
-            User user = _userDb.FindUserByEmail(Guid.NewGuid().ToString());
+            User user = await _userDb.FindUserByEmail(Guid.NewGuid().ToString());
 
             // Assert
             Assert.Null(user);
@@ -213,10 +213,10 @@ namespace UnitTests.Db
             };
 
             _userDbMock.Setup(x => x.UserExistsByEmail(email))
-                .Returns(true);
+                .Returns(Task.FromResult(true));
 
             // Act
-            bool exists = _userDb.UserExistsByEmail(email);
+            bool exists = await _userDb.UserExistsByEmail(email);
 
             // Assert
             Assert.True(exists);
@@ -234,10 +234,10 @@ namespace UnitTests.Db
             };
 
             _userDbMock.Setup(x => x.UserExistsByEmail(It.IsAny<string>()))
-                .Returns(false);
+                .Returns(Task.FromResult(false));
 
             // Act
-            bool exists = _userDb.UserExistsByEmail(email);
+            bool exists = await _userDb.UserExistsByEmail(email);
 
             // Assert
             Assert.False(exists);
@@ -254,10 +254,10 @@ namespace UnitTests.Db
             };
 
             _userDbMock.Setup(x => x.UserExistsById(userId))
-                .Returns(true);
+                .Returns(Task.FromResult(true));
 
             // Act
-            bool exists = _userDb.UserExistsById(userId);
+            bool exists = await _userDb.UserExistsById(userId);
 
             // Assert
             Assert.True(exists);
@@ -274,10 +274,10 @@ namespace UnitTests.Db
             };
 
             _userDbMock.Setup(x => x.UserExistsById(It.IsAny<string>()))
-                .Returns(false);
+                .Returns(Task.FromResult(false));
 
             // Act
-            bool exists = _userDb.UserExistsByEmail(userId);
+            bool exists = await _userDb.UserExistsByEmail(userId);
 
             // Assert
             Assert.False(exists);
