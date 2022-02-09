@@ -175,7 +175,7 @@ namespace Services
         {
             try
             {
-                if (_dbUser.UserExistsById(userId) == Task.FromResult(false))
+                if (!await _dbUser.UserExistsById(userId))
                     return false;
 
                 User user = await _dbUser.FindUserById(userId);
@@ -206,7 +206,7 @@ namespace Services
         {
             try
             {
-                if (_dbUser.UserExistsById(userId) == Task.FromResult(false))
+                if (!await _dbUser.UserExistsById(userId))
                     return false;
 
                 return await _likeDb.DeleteLikeOnPost(userId, postId);

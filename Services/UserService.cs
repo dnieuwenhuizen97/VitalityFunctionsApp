@@ -34,19 +34,19 @@ namespace Services
             this.Logger = logger;
         }
 
-        public Task<User> AddUser(UserRegisterRequest request)
+        public async Task<User> AddUser(UserRegisterRequest request)
         {
-            if (UserDb.UserExistsByEmail(request.Email) == Task.FromResult(true))
+            if (await UserDb.UserExistsByEmail(request.Email))
                 throw new Exception("A user with this e-mail address already exists");
 
             User user = new User(Guid.NewGuid().ToString(), request.Email);
             user.SetUserPassword(request.Password);
 
-            UserDb.SaveUser(user);
-            UserDb.SetActivated(user.UserId);
+            await UserDb.SaveUser(user);
+            await UserDb.SetActivated(user.UserId);
             //QueueService.CreateMessage($"{request.Email},{user.UserId}", "email-verification-queue");
 
-            return Task.FromResult(user);
+            return user;
         }
 
         public async Task<User> GetUserById(string userId)

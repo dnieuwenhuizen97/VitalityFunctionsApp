@@ -110,7 +110,7 @@ namespace UnitTests.Db
         {
             // Arrange
             _userDbMock.Setup(x => x.FindUserByEmail(It.IsAny<string>()))
-                .Returns(() => null);
+                .ReturnsAsync(() => null);
 
             // Act
             User user = await _userDb.FindUserByEmail("dylan.nieuwenhuizen@inholland.nl");
