@@ -84,7 +84,7 @@ namespace UnitTests.Services
             _timelineDbMock.Setup(x => x.GetTimelinePosts(limit, offset))
                 .Returns(Task.FromResult(timelinePosts));
             _userDbMock.Setup(x => x.FindUserById(currentUserId))
-                .Returns(user);
+                .Returns(Task.FromResult(user));
             _likeDbMock.Setup(x => x.LikeExists(Guid.NewGuid().ToString(), currentUserId))
                 .Returns(Task.FromResult(false));
             _likeDbMock.Setup(x => x.GetTotalLikesOnPost(Guid.NewGuid().ToString()))
@@ -144,7 +144,7 @@ namespace UnitTests.Services
             TimelinePost timelinePost = new TimelinePost();
 
             _userDbMock.Setup(x => x.UserExistsById(userId))
-                .Returns(false);
+                .Returns(Task.FromResult(false));
 
             // Act
             bool result = await _timelineService.PutLikeOnPost(userId, timelinePostId);
@@ -163,7 +163,7 @@ namespace UnitTests.Services
             TimelinePost timelinePost = new TimelinePost();
 
             _userDbMock.Setup(x => x.UserExistsById(userId))
-                .Returns(true);
+                .Returns(Task.FromResult(true));
             _likeDbMock.Setup(x => x.LikeExists(timelinePostId, userId))
                 .Returns(Task.FromResult(true));
             _timelineDbMock.Setup(x => x.GetTimelinePostById(It.IsAny<string>()))
@@ -184,7 +184,7 @@ namespace UnitTests.Services
             string postId = Guid.NewGuid().ToString();
 
             _userDbMock.Setup(x => x.UserExistsById(userId))
-                .Returns(true);
+                .Returns(Task.FromResult(true));
             _likeDbMock.Setup(x => x.DeleteLikeOnPost(userId, postId))
                 .Returns(Task.FromResult(true));
 
@@ -203,7 +203,7 @@ namespace UnitTests.Services
             string postId = Guid.NewGuid().ToString();
 
             _userDbMock.Setup(x => x.UserExistsById(userId))
-                .Returns(false);
+                .Returns(Task.FromResult(false));
             _likeDbMock.Setup(x => x.DeleteLikeOnPost(userId, postId))
                 .Returns(Task.FromResult(true));
 
@@ -234,7 +234,7 @@ namespace UnitTests.Services
             _likeDbMock.Setup(x => x.GetLikersOnPost(timelinePostId, limit, offset))
                 .Returns(Task.FromResult(testLikes));
             _userDbMock.Setup(x => x.FindUserById(It.IsAny<string>()))
-                .Returns(user);
+                .Returns(Task.FromResult(user));
 
             // Act
             List<LikeDTO> likes = await _timelineService.GetLikersOnPost(timelinePostId, limit, offset);
@@ -256,7 +256,7 @@ namespace UnitTests.Services
             _likeDbMock.Setup(x => x.GetLikersOnPost(timelinePostId, limit, offset))
                 .Returns(Task.FromResult(new List<Like>()));
             _userDbMock.Setup(x => x.FindUserById(It.IsAny<string>()))
-                .Returns(user);
+                .Returns(Task.FromResult(user));
 
             // Act
             List<LikeDTO> likes = await _timelineService.GetLikersOnPost(timelinePostId, limit, offset);
@@ -279,7 +279,7 @@ namespace UnitTests.Services
             _commentDbMock.Setup(x => x.GetCommentsOnPost(timelinePostId, limit, offset))
                 .Returns(Task.FromResult(new List<Comment>()));
             _userDbMock.Setup(x => x.FindUserById(It.IsAny<string>()))
-                .Returns(user);
+                .Returns(Task.FromResult(user));
 
             // Act
             List<CommentOfUserDTO> comments = await _timelineService.GetCommentsOnPost(timelinePostId, limit, offset);
