@@ -72,10 +72,10 @@ namespace Infrastructure.Context
 
         public async Task<User> FindUserById(string userId)
         {
-            return await _dbContext.Users
+            return _dbContext.Users
                                 .Include(u => u.Followers)
                                 .Include(u => u.SubscribedChallenges)
-                                .FirstOrDefaultAsync(u => u.UserId == userId);
+                                .FirstOrDefault(u => u.UserId == userId);
         }
 
         public async Task<List<User>> FindUsersByName(string name, string currentUserId, int limit, int offset)

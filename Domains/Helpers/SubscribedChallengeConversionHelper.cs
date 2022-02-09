@@ -24,7 +24,8 @@ namespace Domains.Helpers
 
             foreach (SubscribedChallenge challenge in challenges)
             {
-                subscribedChallengeDTOs.Add(ToDTO(challenge));
+                if (challenge.Challenge != null)
+                    subscribedChallengeDTOs.Add(ToDTO(challenge));
             }
 
             return subscribedChallengeDTOs;
