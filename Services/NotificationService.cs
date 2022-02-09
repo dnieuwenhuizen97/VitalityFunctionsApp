@@ -29,7 +29,7 @@ namespace Services
 
         public async Task CreateNotification(NotificationDTO notificationDTO)
         {
-            User toUser = _dbUser.FindUserById(notificationDTO.ToUser);
+            User toUser = await _dbUser.FindUserById(notificationDTO.ToUser);
             Notification notification = NotificationConversiontHelper.ToNotification(notificationDTO, toUser);
 
             await _dbNotification.CreateNotification(notification);
@@ -39,8 +39,8 @@ namespace Services
         {
             try
             {
-                var exists = _dbUser.UserExistsById(userId);
-                if (exists is false) { return null; }
+                if (_dbUser.UserExistsById(userId) == Task.FromResult(false))
+                    return null;
 
                 // check to see if the pushtoken already exists
                 var token = await _dbPushToken.GetPushTokensByUserId(userId, type);
@@ -62,10 +62,10 @@ namespace Services
         {
             try
             {
-                if (!_dbUser.UserExistsById(userId))
+                if (_dbUser.UserExistsById(userId) == Task.FromResult(false))
                     return null;
 
-                User user = _dbUser.FindUserById(userId);
+                User user = await _dbUser.FindUserById(userId);
                 var notifications = await _dbNotification.GetNotifications(user, limit, offset);
 
                 List<NotificationDTO> list = notifications
@@ -76,7 +76,7 @@ namespace Services
                 foreach (var item in list)
                 {
                     var senderId = item.UserId;
-                    var sender = _dbUser.FindUserById(senderId);
+                    var sender = await _dbUser.FindUserById(senderId);
                     // set the fullname and profilepicture of sender
                     item.FullNameSender = $"{sender.Firstname} {sender.Lastname}".Trim();
                     item.ProfilePictureSender = sender.ProfilePicture;
@@ -107,8 +107,8 @@ namespace Services
         {
             try
             {
-                var exists = _dbUser.UserExistsById(userId);
-                if (exists is false) { return null; }
+                if (_dbUser.UserExistsById(userId) == Task.FromResult(false))
+                    return null;
 
                 var tokens = await _dbPushToken.UpdatePushToken(userId, IsTurnedOn);
                 var tokensDTO = tokens.Select(x => NotificationConversiontHelper.ToDTO(x)).ToList();
@@ -124,7 +124,7 @@ namespace Services
         {
             try
             {
-                User user = _dbUser.FindUserById(userId);
+                User user = await _dbUser.FindUserById(userId);
                 await _dbPushToken.DeletePushToken(user, pushTokenId);
                 return true;
             }
@@ -139,7 +139,7 @@ namespace Services
             // don't send a notificiation if you are your own 'like/comment/etc'
             if (toUserId == currentUserId) return;
 
-            User toUser = _dbUser.FindUserById(toUserId);
+            User toUser = await _dbUser.FindUserById(toUserId);
 
             // if follow, see if same following values are already in db within 5 minutes.
             if (type == NotificationTypes.Follow)

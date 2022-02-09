@@ -68,11 +68,11 @@ namespace VitalityFunctionsApp.Controllers
                 {
                     if (userId == null)
                     {
-                        user = UserService.GetUserDtoById(currentUserId);
+                        user = await UserService.GetUserDtoById(currentUserId);
                     }
                     else
                     {
-                        user = UserService.GetUserDtoByIdWithFollowingProperty(userId, currentUserId);
+                        user = await UserService.GetUserDtoByIdWithFollowingProperty(userId, currentUserId);
                     }
                 }
                 catch (Exception e)

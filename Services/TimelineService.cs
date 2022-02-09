@@ -36,7 +36,7 @@ namespace Services
         public async Task<TimelinePostDTO> CreatePost(TimelinePostCreationRequest request, string currentUserId)
         {
             request.Text = await _inputSanitizationService.SanitizeInput(request.Text);
-            User currentUser = _dbUser.FindUserById(currentUserId);
+            User currentUser = await _dbUser.FindUserById(currentUserId);
             TimelinePost timelinePost = TimelineConversionHelper.ToTimelinePost(request, currentUser);
             await _timelineDb.CreatePost(timelinePost);
 
@@ -159,7 +159,7 @@ namespace Services
         public async Task<CommentDTO> PostComment(CommentCreationRequest request, string timelinePostId, string currentUserId)
         {
             request.Text = await _inputSanitizationService.SanitizeInput(request.Text);
-            User user = _dbUser.FindUserById(currentUserId);
+            User user = await _dbUser.FindUserById(currentUserId);
             TimelinePost timelinePost = await _timelineDb.GetTimelinePostById(timelinePostId);
 
             Comment commentDAL = TimelineConversionHelper.RequestToComment(request, timelinePost, user);
@@ -175,10 +175,10 @@ namespace Services
         {
             try
             {
-                if (!_dbUser.UserExistsById(userId))
+                if (_dbUser.UserExistsById(userId) == Task.FromResult(false))
                     return false;
 
-                User user = _dbUser.FindUserById(userId);
+                User user = await _dbUser.FindUserById(userId);
                 TimelinePost timelinePost = await _timelineDb.GetTimelinePostById(timelinePostId);
 
                 Like like = new Like()
@@ -206,8 +206,8 @@ namespace Services
         {
             try
             {
-                var exists = _dbUser.UserExistsById(userId);
-                if (exists is false) { return false; }
+                if (_dbUser.UserExistsById(userId) == Task.FromResult(false))
+                    return false;
 
                 return await _likeDb.DeleteLikeOnPost(userId, postId);
             }

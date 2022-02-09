@@ -22,16 +22,16 @@ namespace Infrastructure.Context
 
         public UserDb() { }
 
-        public void SaveUser(User user)
+        public async Task SaveUser(User user)
         {
             user.SetUserPassword(BCrypt.Net.BCrypt.HashPassword(user.Password));
-            _dbContext.Add(user);
-            _dbContext.SaveChanges();
+            await _dbContext.AddAsync(user);
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<User> SetActivated(string userId)
         {
-            if (!UserExistsById(userId))
+            if (UserExistsById(userId) == Task.FromResult(false))
                 throw new KeyNotFoundException("User was not found");
 
             User user = _dbContext.Users.Find(userId);
@@ -44,7 +44,7 @@ namespace Infrastructure.Context
 
         public async Task<User> CheckUserCredentials(LoginRequest request)
         {
-            User user = FindUserByEmail(request.Email);
+            User user = await FindUserByEmail(request.Email);
 
             if (!user.IsVerified)
                 throw new UnauthorizedAccessException("User account is not yet verified.");
@@ -54,13 +54,13 @@ namespace Infrastructure.Context
             return user;
         }
 
-        public User FindUserByEmail(string email)
+        public async Task<User> FindUserByEmail(string email)
         {
             try
             {
-                User user = _dbContext.Users
+                User user = await _dbContext.Users
                                             .AsQueryable()
-                                            .Where(u => u.Email == email).First();
+                                            .Where(u => u.Email == email).FirstAsync();
 
                 return user;
             }
@@ -70,12 +70,12 @@ namespace Infrastructure.Context
             }
         }
 
-        public User FindUserById(string userId)
+        public async Task<User> FindUserById(string userId)
         {
-            return _dbContext.Users
+            return await _dbContext.Users
                                 .Include(u => u.Followers)
                                 .Include(u => u.SubscribedChallenges)
-                                .FirstOrDefault(u => u.UserId == userId);
+                                .FirstOrDefaultAsync(u => u.UserId == userId);
         }
 
         public async Task<List<User>> FindUsersByName(string name, string currentUserId, int limit, int offset)
@@ -106,16 +106,16 @@ namespace Infrastructure.Context
             return usersToReturn;
         }
 
-        public bool UserExistsByEmail(string email)
+        public async Task<bool> UserExistsByEmail(string email)
         {
             return _dbContext.Users
-                .Any(u => u.Email == email); // TODO: AnyAsync
+                .Any(u => u.Email == email); 
         }
 
-        public bool UserExistsById(string userId)
+        public async Task<bool> UserExistsById(string userId)
         {
             return _dbContext.Users
-                .Any(u => u.UserId == userId); // TODO: AnyAsync
+                .Any(u => u.UserId == userId); 
         }
 
         public async Task AddUserFollowers(User user, string id)
