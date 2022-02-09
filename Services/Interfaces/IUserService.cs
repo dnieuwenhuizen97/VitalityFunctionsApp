@@ -10,9 +10,9 @@ namespace Services.Interfaces
     public interface IUserService
     {
         Task<User> AddUser(UserRegisterRequest user);
-        User GetUserById(string userId);
-        UserDTO GetUserDtoById(string userId);
-        UserDTO GetUserDtoByIdWithFollowingProperty(string userId, string currentUserId);
+        Task<User> GetUserById(string userId);
+        Task<UserDTO> GetUserDtoById(string userId);
+        Task<UserDTO> GetUserDtoByIdWithFollowingProperty(string userId, string currentUserId);
         Task<User> ActivateUser(string userId);
         Task<User> LoginUser(LoginRequest request);
         Task<UserDTO> FollowUserById(string currentUserId, string userId, bool following);

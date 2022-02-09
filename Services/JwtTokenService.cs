@@ -149,7 +149,7 @@ namespace Services
             return JsonConvert.DeserializeObject<RefreshToken>(Encoding.UTF8.GetString(base64EncodedBytes));
         }
 
-        public Task<LoginResult> LoginUserByRefresh(string RefreshToken)
+        public async Task<LoginResult> LoginUserByRefresh(string RefreshToken)
         {
             RefreshToken refreshToken = Base64DecodeObject(RefreshToken);
 
@@ -158,9 +158,9 @@ namespace Services
                 throw new Exception("Refresh token is expired");
             }
 
-            User user = UserService.GetUserById(refreshToken.UserId);
+            User user = await UserService.GetUserById(refreshToken.UserId);
 
-            return CreateToken(user);
+            return await CreateToken(user);
         }
     }
 

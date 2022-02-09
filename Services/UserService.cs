@@ -36,7 +36,7 @@ namespace Services
 
         public Task<User> AddUser(UserRegisterRequest request)
         {
-            if (UserDb.UserExistsByEmail(request.Email))
+            if (UserDb.UserExistsByEmail(request.Email) == Task.FromResult(true))
                 throw new Exception("A user with this e-mail address already exists");
 
             User user = new User(Guid.NewGuid().ToString(), request.Email);
@@ -49,21 +49,21 @@ namespace Services
             return Task.FromResult(user);
         }
 
-        public User GetUserById(string userId)
+        public async Task<User> GetUserById(string userId)
         {
-            return UserDb.FindUserById(userId);
+            return await UserDb.FindUserById(userId);
         }
 
-        public UserDTO GetUserDtoById(string userId)
+        public async Task<UserDTO> GetUserDtoById(string userId)
         {
-            User user = GetUserById(userId);
+            User user = await GetUserById(userId);
 
             return UserConversionHelper.ToDTO(user);
         }
 
-        public UserDTO GetUserDtoByIdWithFollowingProperty(string userId, string currentUserId)
+        public async Task<UserDTO> GetUserDtoByIdWithFollowingProperty(string userId, string currentUserId)
         {
-            User user = GetUserById(userId);
+            User user = await GetUserById(userId);
 
             return UserConversionHelper.ToDTOWithFollowingProperty(user, currentUserId);
         }
@@ -95,7 +95,7 @@ namespace Services
 
         public async Task<UserDTO> FollowUserById(string currentUserId, string userId, bool follow)
         {
-            User userToFollow = GetUserById(userId);
+            User userToFollow = await GetUserById(userId);
 
             if (userToFollow.UserId == currentUserId)
                 throw new InvalidOperationException("Id of the user to follow cannot be the same as the current user id");
@@ -119,7 +119,7 @@ namespace Services
 
         public async Task UpdateUser(string currentUserId, UserUpdatePropertiesDTO userToUpdate)
         {
-            User currentUser = UserDb.FindUserById(currentUserId);
+            User currentUser = await UserDb.FindUserById(currentUserId);
             string oldProfilePicture = currentUser.ProfilePicture;
 
             if (userToUpdate.Image is not null)
@@ -161,7 +161,7 @@ namespace Services
 
         public async Task<UserDTO> DeleteUserById(string userId)
         {
-            User user = UserDb.FindUserById(userId);
+            User user = await UserDb.FindUserById(userId);
 
             if (user == null) 
                 throw new NotFoundException("User with the given userId was not found");
@@ -173,7 +173,7 @@ namespace Services
 
         public async Task CreateRecoveryToken(string email)
         {
-            User user = UserDb.FindUserByEmail(email);
+            User user = await UserDb.FindUserByEmail(email);
 
             UserRecoveryToken recoveryToken = new UserRecoveryToken(user.UserId);
             await UserDb.SaveUserRecoveryToken(recoveryToken);
@@ -188,7 +188,7 @@ namespace Services
             if (!await IsRecoveryTokenValid(recoveryToken.RecoveryTokenId))
                 throw new Exception("Recovery token has expired or does not exist");
 
-            User user = UserDb.FindUserById(recoveryToken.UserId);
+            User user = await UserDb.FindUserById(recoveryToken.UserId);
             await UserDb.UpdateUserPassword(user.UserId, password);
 
             await UserDb.DeleteRecoveryTokenById(recoveryToken.RecoveryTokenId);

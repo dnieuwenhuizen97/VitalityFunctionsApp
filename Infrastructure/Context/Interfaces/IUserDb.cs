@@ -10,14 +10,14 @@ namespace Infrastructure.Context.Interfaces
 {
     public interface IUserDb
     {
-        void SaveUser(User user);
+        Task SaveUser(User user);
         Task<User> SetActivated(string userId);
         Task<User> CheckUserCredentials(LoginRequest request);
-        User FindUserByEmail(string email);
-        User FindUserById(string userId);
+        Task<User> FindUserByEmail(string email);
+        Task<User> FindUserById(string userId);
         Task<List<User>> FindUsersByName(string name, string currentUserId, int limit, int offset);
-        bool UserExistsByEmail(string email);
-        bool UserExistsById(string userId);
+        Task<bool> UserExistsByEmail(string email);
+        Task<bool> UserExistsById(string userId);
         Task AddUserFollowers(User user, string id);
         Task RemoveUserFollowers(User user, string id);
         Task<User> FindUserWithFollowers(User user);
