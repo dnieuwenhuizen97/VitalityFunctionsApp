@@ -53,10 +53,10 @@ namespace UnitTests.Services
                 "password");
 
             _userDbMock.Setup(x => x.UserExistsByEmail(registerRequest.Email))
-                .Returns(Task.FromResult(true));
+                .ReturnsAsync(true);
 
             // Act
-            var exception = Assert.Throws<Exception>(() => { _userService.AddUser(registerRequest); });
+            var exception = await Assert.ThrowsAsync<Exception>(async () => { await _userService.AddUser(registerRequest); });
 
             // Assert
             Assert.Equal("A user with this e-mail address already exists", exception.Message);
@@ -91,7 +91,7 @@ namespace UnitTests.Services
         {
             // Arrange
             _userDbMock.Setup(x => x.FindUserById(It.IsAny<string>()))
-               .Returns(() => null);
+               .ReturnsAsync(() => null);
 
             // Act
             User user = await _userService.GetUserById(Guid.NewGuid().ToString());
@@ -154,7 +154,7 @@ namespace UnitTests.Services
                .Returns(() => null);
 
             // Act
-            var exception = Assert.Throws<NullReferenceException>(() => { _userService.GetUserDtoById(userId); }); ;
+            var exception = await Assert.ThrowsAnyAsync<NullReferenceException>(async () => { await _userService.GetUserDtoById(userId); }); ;
 
 
             // Assert

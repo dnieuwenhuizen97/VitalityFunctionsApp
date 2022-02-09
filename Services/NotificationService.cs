@@ -39,7 +39,7 @@ namespace Services
         {
             try
             {
-                if (_dbUser.UserExistsById(userId) == Task.FromResult(false))
+                if (!await _dbUser.UserExistsById(userId))
                     return null;
 
                 // check to see if the pushtoken already exists
@@ -107,7 +107,7 @@ namespace Services
         {
             try
             {
-                if (_dbUser.UserExistsById(userId) == Task.FromResult(false))
+                if (!await _dbUser.UserExistsById(userId))
                     return null;
 
                 var tokens = await _dbPushToken.UpdatePushToken(userId, IsTurnedOn);
