@@ -433,6 +433,36 @@ namespace VitalityFunctionsApp.Controllers
             return response;
         }
 
+        [Function(nameof(CheckUserDetailsFilledIn))]
+        [OpenApiOperation(operationId: "checkUserDetailsFilledIn", tags: new[] { "user" }, Summary = "Checks if the current user has filled in it's account details", Description = "Checks if the current user has filled in it's account details", Visibility = OpenApiVisibilityType.Important)]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(bool), Summary = "Successfully checked properties of user", Description = "Successful operation")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Summary = "BadRequest", Description = "BadRequest")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Summary = "User not found", Description = "User not found")]
+        [VitalityAppAuth]
+        [ForbiddenRequest]
+        [UnauthorizedRequest]
+        public async Task<HttpResponseData> CheckUserDetailsFilledIn([HttpTrigger(AuthorizationLevel.Anonymous, "GET", Route = "user/details")] HttpRequestData req, FunctionContext executionContext)
+        {
+            return await RequestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
+            {
+                HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
+                string currentUserId = currentUser.FindFirst(ClaimTypes.Sid).Value;
+
+                try
+                {
+                    bool result = await UserService.UserDetailsFilledIn(currentUserId);
+                    await response.WriteAsJsonAsync(result);
+                }
+                catch (Exception e)
+                {
+                    Logger.LogError(e.Message);
+                    response = req.CreateResponse(HttpStatusCode.BadRequest);
+                }
+
+                return response;
+            });
+        }
+
         [Function(nameof(ResetPassword))]
         [OpenApiOperation(operationId: "resetPassword", tags: new[] { "user" }, Summary = "Resets the user's password", Description = "Resets the user's password with the help of a recovery token")]
         [OpenApiParameter(name: "password", In = ParameterLocation.Query, Required = true, Type = typeof(string), Summary = "The user's new password", Description = "The user's new password", Visibility = OpenApiVisibilityType.Important)]
