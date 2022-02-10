@@ -55,17 +55,17 @@ namespace VitalityFunctionsApp.Controllers
             return await _requestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
-                var timelinePost = new TimelinePostDTO();
+                TimelinePostDTO timelinePost = new TimelinePostDTO();
 
                 try
                 {
                 // Rip the multiformdata into pieces
-                var parsedFormBody = await MultipartFormDataParser.ParseAsync(req.Body);
+                MultipartFormDataParser parsedFormBody = await MultipartFormDataParser.ParseAsync(req.Body);
                 var parameters = parsedFormBody.Parameters;
 
                 // Retrieve the "Text" from request
                 List<ParametersKeys> parametersKeysDTO = parameters.Select(x => new ParametersKeys { Data = x.Data, Text = x.Name }).ToList();
-                var text = parametersKeysDTO.FirstOrDefault(x => x.Text.ToLower() == "text");
+                ParametersKeys text = parametersKeysDTO.FirstOrDefault(x => x.Text.ToLower() == "text");
 
                 // Retrieve images and video from request
                 List<StreamContentDTO> files = new List<StreamContentDTO>();
@@ -112,7 +112,7 @@ namespace VitalityFunctionsApp.Controllers
                 Dictionary<string, StringValues> queryParams = QueryHelpers.ParseQuery(req.Url.Query);
                 int limit = int.Parse(queryParams["limit"]);
                 int offset = int.Parse(queryParams["offset"]);
-                var timelinePosts = new List<TimelinePostDTO>();
+                List<TimelinePostDTO> timelinePosts = new List<TimelinePostDTO>();
 
                 try
                 {
@@ -240,7 +240,7 @@ namespace VitalityFunctionsApp.Controllers
                 Dictionary<string, StringValues> queryParams = QueryHelpers.ParseQuery(req.Url.Query);
                 int limit = int.Parse(queryParams["limit"]);
                 int offset = int.Parse(queryParams["offset"]);
-                var likersOfPost = new List<LikeDTO>();
+                List<LikeDTO> likersOfPost = new List<LikeDTO>();
 
                 try
                 {
@@ -275,7 +275,7 @@ namespace VitalityFunctionsApp.Controllers
                 Dictionary<string, StringValues> queryParams = QueryHelpers.ParseQuery(req.Url.Query);
                 int limit = int.Parse(queryParams["limit"]);
                 int offset = int.Parse(queryParams["offset"]);
-                var commentsOnPost = new List<CommentOfUserDTO>();
+                List<CommentOfUserDTO> commentsOnPost = new List<CommentOfUserDTO>();
 
                 try
                 {
@@ -306,7 +306,7 @@ namespace VitalityFunctionsApp.Controllers
             return await _requestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
-                var success = false;
+                bool success = false;
                 try
                 {
                     success = await _timelineService.PutLikeOnPost(currentUser.FindFirst(ClaimTypes.Sid).Value, timelinePostId);

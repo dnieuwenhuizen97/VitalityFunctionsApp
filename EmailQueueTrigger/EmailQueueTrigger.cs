@@ -19,7 +19,7 @@ namespace EmailQueueTrigger
         public async Task Run([QueueTrigger("email-verification-queue", Connection = "AzureWebJobsStorage")] string emailQueueItem, FunctionContext context)
         {
 
-            var logger = context.GetLogger("EmailQueueTrigger");
+            ILogger logger = context.GetLogger("EmailQueueTrigger");
 
             string[] emailData = emailQueueItem.Split(',');
 
@@ -31,8 +31,6 @@ namespace EmailQueueTrigger
         [Function("RecoveryEmailQueueTrigger")]
         public async Task Recover([QueueTrigger("user-recovery-queue", Connection = "AzureWebJobsStorage")] string queueItem, FunctionContext context)
         {
-            var logger = context.GetLogger("RecoveryEmailQueueTrigger");
-
             string[] data = queueItem.Split(',');
 
             await ValidationService.SendRecoveryEmail(data[0], data[1]);

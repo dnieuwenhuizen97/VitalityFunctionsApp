@@ -24,7 +24,7 @@ namespace Infrastructure.Context
         {
             try
             {
-                var pushtokens = await _dbContext.PushTokens
+                PushToken pushtokens = await _dbContext.PushTokens
                                                             .AsQueryable()
                                                             .Where(x => x.UserId == userId)
                                                             .Where(x => x.DeviceType == type)
@@ -64,7 +64,7 @@ namespace Infrastructure.Context
         {
             try
             {
-                var pushTokens = await _dbContext.PushTokens
+                List<PushToken> pushTokens = await _dbContext.PushTokens
                                                             .AsQueryable()
                                                             .Where(x => x.UserId == userId)
                                                             .ToListAsync();
@@ -87,7 +87,7 @@ namespace Infrastructure.Context
             try
             {
                 // When a pushtoken is delete, first delete the notifications that belong to it.
-                var notifications = await _dbContext.Notifications
+                List<Notification> notifications = await _dbContext.Notifications
                                                                   .AsQueryable()
                                                                   .Where(x => x.ToUser == user)
                                                                   .ToListAsync();
@@ -98,7 +98,7 @@ namespace Infrastructure.Context
                 }
 
 
-                var token = await _dbContext.PushTokens
+                PushToken token = await _dbContext.PushTokens
                                                         .AsQueryable()
                                                         .Where(x => x.PushTokenId == pushTokenId)
                                                         .FirstOrDefaultAsync();

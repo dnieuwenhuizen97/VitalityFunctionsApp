@@ -63,7 +63,7 @@ namespace Infrastructure.Context
         {
             try
             {
-                var timelinePost = await _dbContext.TimelinePosts
+                TimelinePost timelinePost = await _dbContext.TimelinePosts
                                                         .AsQueryable()
                                                         .Where(x => x.TimelinePostId == timelinePostId)
                                                         .FirstOrDefaultAsync();

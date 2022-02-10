@@ -27,15 +27,15 @@ namespace Services
             Console.WriteLine(uri);
             try
             {
-                var client = new SendGridClient(Environment.GetEnvironmentVariable("SendGridClient"));
-                var from = new EmailAddress(Environment.GetEnvironmentVariable("SendGridEmailAddress"), "Inholland MijnVitaliteit");
-                var subject = "Activeer je MijnVitaliteit account";
-                var to = new EmailAddress(Email, "");
-                var plainTextContent = "Bedankt voor het registeren in de Inholland MijnVitaliteit app. Om gebruik te kunnen maken van de app moet jouw account geactiveerd worden via deze link.";
-                var htmlContent = $"<div><strong>Bedankt voor het registeren in de Inholland MijnVitaliteit app</strong><br>" +
+                SendGridClient client = new SendGridClient(Environment.GetEnvironmentVariable("SendGridClient"));
+                EmailAddress from = new EmailAddress(Environment.GetEnvironmentVariable("SendGridEmailAddress"), "Inholland MijnVitaliteit");
+                string subject = "Activeer je MijnVitaliteit account";
+                EmailAddress to = new EmailAddress(Email, "");
+                string plainTextContent = "Bedankt voor het registeren in de Inholland MijnVitaliteit app. Om gebruik te kunnen maken van de app moet jouw account geactiveerd worden via deze link.";
+                string htmlContent = $"<div><strong>Bedankt voor het registeren in de Inholland MijnVitaliteit app</strong><br>" +
                                     $"<p>Om gebruik te kunnen maken van de app moet jouw account geactiveerd worden via <a href={uri}>Deze link</a>.</p></div>";
-                var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-                var response = await client.SendEmailAsync(msg);
+                SendGridMessage msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+                Response response = await client.SendEmailAsync(msg);
             }
             catch (Exception e)
             {
@@ -50,14 +50,14 @@ namespace Services
             Console.WriteLine(uri);
             try
             {
-                var client = new SendGridClient(Environment.GetEnvironmentVariable("SendGridClient"));
-                var from = new EmailAddress(Environment.GetEnvironmentVariable("SendGridEmailAddress"), "Inholland MijnVitaliteit");
-                var subject = "Herstel je MijnVitaliteit account";
-                var to = new EmailAddress(email, "");
-                var plainTextContent = "";
-                var htmlContent = $"<div><p>Om uw wachtwoord te herstellen kunt u gebruik maken van <a href={uri}>deze link</a>.</p></div>";
-                var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-                var response = await client.SendEmailAsync(msg);
+                SendGridClient client = new SendGridClient(Environment.GetEnvironmentVariable("SendGridClient"));
+                EmailAddress from = new EmailAddress(Environment.GetEnvironmentVariable("SendGridEmailAddress"), "Inholland MijnVitaliteit");
+                string subject = "Herstel je MijnVitaliteit account";
+                EmailAddress to = new EmailAddress(email, "");
+                string plainTextContent = "";
+                string htmlContent = $"<div><p>Om uw wachtwoord te herstellen kunt u gebruik maken van <a href={uri}>deze link</a>.</p></div>";
+                SendGridMessage msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+                Response response = await client.SendEmailAsync(msg);
             }
             catch (Exception e)
             {

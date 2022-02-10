@@ -208,7 +208,7 @@ namespace VitalityFunctionsApp.Controllers
                 try
                 {
                     // Rip the multiformdata into pieces
-                    var parsedFormBody = await MultipartFormDataParser.ParseAsync(req.Body);
+                    MultipartFormDataParser parsedFormBody = await MultipartFormDataParser.ParseAsync(req.Body);
                     var parameters = parsedFormBody.Parameters;
 
                     string firstname = "";
@@ -221,12 +221,12 @@ namespace VitalityFunctionsApp.Controllers
                     // Retrieve the "parameters" from request
                     List<ParametersKeys> parametersKeysDTO = parameters.Select(x => new ParametersKeys { Data = x.Data, Text = x.Name }).ToList();
 
-                    var formFirstname = parametersKeysDTO.FirstOrDefault(x => x.Text == "firstname");
-                    var formLastname = parametersKeysDTO.FirstOrDefault(x => x.Text == "lastname");
-                    var formJobTitle = parametersKeysDTO.FirstOrDefault(x => x.Text == "jobTitle");
-                    var formLocation = parametersKeysDTO.FirstOrDefault(x => x.Text == "location");
-                    var formDescription = parametersKeysDTO.FirstOrDefault(x => x.Text == "description");
-                    var formPassword = parametersKeysDTO.FirstOrDefault(x => x.Text == "password");
+                    ParametersKeys formFirstname = parametersKeysDTO.FirstOrDefault(x => x.Text == "firstname");
+                    ParametersKeys formLastname = parametersKeysDTO.FirstOrDefault(x => x.Text == "lastname");
+                    ParametersKeys formJobTitle = parametersKeysDTO.FirstOrDefault(x => x.Text == "jobTitle");
+                    ParametersKeys formLocation = parametersKeysDTO.FirstOrDefault(x => x.Text == "location");
+                    ParametersKeys formDescription = parametersKeysDTO.FirstOrDefault(x => x.Text == "description");
+                    ParametersKeys formPassword = parametersKeysDTO.FirstOrDefault(x => x.Text == "password");
 
                     if (formFirstname != null)
                         firstname = await InputSanitizationService.SanitizeInput(formFirstname.Data);

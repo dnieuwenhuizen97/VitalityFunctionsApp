@@ -25,7 +25,7 @@ namespace Infrastructure.StorageAccount
         public CloudBlobContainer GetContainerReference(string containerName)
         {
             cloudStorageAccount = GetCloudStorageAccount();
-            var blobClient = cloudStorageAccount.CreateCloudBlobClient();
+            CloudBlobClient blobClient = cloudStorageAccount.CreateCloudBlobClient();
             return blobClient.GetContainerReference(containerName);
         }
 
@@ -33,7 +33,7 @@ namespace Infrastructure.StorageAccount
         {
             try
             {
-                var cloudBlobContainer = GetContainerReference("images");
+                CloudBlobContainer cloudBlobContainer = GetContainerReference("images");
                 await cloudBlobContainer.CreateIfNotExistsAsync();
                 CloudBlockBlob cBlockBlob = cloudBlobContainer.GetBlockBlobReference(imageReferenceName);
                 cBlockBlob.Properties.ContentType = "image/png";
@@ -76,7 +76,7 @@ namespace Infrastructure.StorageAccount
         {
             try
             {
-                var cloudBlobContainer = GetContainerReference("videos");
+                CloudBlobContainer cloudBlobContainer = GetContainerReference("videos");
                 await cloudBlobContainer.CreateIfNotExistsAsync();
                 CloudBlockBlob cBlockBlob = cloudBlobContainer.GetBlockBlobReference(videoRefrenceName);
                 cBlockBlob.Properties.ContentType = "video/mp4";

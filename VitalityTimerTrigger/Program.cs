@@ -17,7 +17,7 @@ namespace VitalityTimerTrigger
     {
         public static void Main()
         {
-            var host = new HostBuilder()
+            IHost host = new HostBuilder()
                 .ConfigureFunctionsWorkerDefaults()
                 .ConfigureServices(Configure)
                 .Build();

@@ -37,7 +37,7 @@ namespace Infrastructure.Context
                 DateTime currentTime = DateTime.Now;
                 DateTime x3MinsLater = currentTime.AddMinutes(5);
 
-                var findSimilarFollow = await _dbContext.Notifications
+                Notification findSimilarFollow = await _dbContext.Notifications
                                                                   .AsQueryable()
                                                                   .Where(x => x.ToUser == toUser)
                                                                   .Where(x => x.UserSenderId == currentUserId)
@@ -65,10 +65,9 @@ namespace Infrastructure.Context
                 limit = 100;
             }
 
-            var results = new List<Notification>();
             try
             {
-                var notifications = await _dbContext.Notifications
+                List<Notification> notifications = await _dbContext.Notifications
                                                                     .AsQueryable()
                                                                     .Where(x => x.ToUser == user && x.UserSenderId != user.UserId)
                                                                     .OrderByDescending(x => x.TimeOfNotification)

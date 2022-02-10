@@ -73,7 +73,7 @@ namespace Domains
     {
         public override IOpenApiExample<User> Build(NamingStrategy namingStrategy = null)
         {
-            var guid = Guid.NewGuid().ToString();
+            string guid = Guid.NewGuid().ToString();
             Examples.Add(OpenApiExampleResolver.Resolve(
                 "User Example",
                new User(guid, "gentlepossel@gmail.com")
