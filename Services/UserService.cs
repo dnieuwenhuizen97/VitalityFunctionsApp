@@ -203,5 +203,10 @@ namespace Services
         {
             await UserDb.DeleteOldRecoveryTokens();
         }
+
+        public async Task<bool> UserDetailsFilledIn(string userId)
+        {
+            return await UserDb.UserDetailsFilledIn(userId);
+        }
     }
 }

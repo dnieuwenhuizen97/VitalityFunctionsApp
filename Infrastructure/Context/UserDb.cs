@@ -333,5 +333,17 @@ namespace Infrastructure.Context
 
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<bool> UserDetailsFilledIn(string userId)
+        {
+            User user = await _dbContext.Users.FindAsync(userId);
+
+            if (user.Firstname == null || user.Lastname == null || user.JobTitle == null || user.Location == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

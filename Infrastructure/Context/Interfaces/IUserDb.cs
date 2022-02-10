@@ -33,5 +33,6 @@ namespace Infrastructure.Context.Interfaces
         Task DeleteRecoveryTokenById(string recoveryTokenId);
         Task<bool> IsRecoveryTokenValid(string token);
         Task DeleteOldRecoveryTokens();
+        Task<bool> UserDetailsFilledIn(string userId);
     }
 }
