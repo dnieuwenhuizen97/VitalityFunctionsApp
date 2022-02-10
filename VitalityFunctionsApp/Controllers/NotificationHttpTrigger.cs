@@ -47,12 +47,12 @@ namespace VitalityFunctionsApp.Controllers
             return await _requestValidator.ValidateRequest(req, executionContext, UserType.User.ToString(), async (ClaimsPrincipal currentUser) =>
             {
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
-                var pushtoken = new PushTokenDTO();
+                PushTokenDTO pushtoken = new PushTokenDTO();
                 try
                 {
                     Dictionary<string, StringValues> queryParams = QueryHelpers.ParseQuery(req.Url.Query);
-                    var deviceTypeInt = int.Parse(queryParams["deviceType"]);
-                    var type = (DeviceType)deviceTypeInt;
+                    int deviceTypeInt = int.Parse(queryParams["deviceType"]);
+                    DeviceType type = (DeviceType)deviceTypeInt;
                     pushtoken = await _pushTokenService.CreatePushToken(currentUser.FindFirst(ClaimTypes.Sid).Value, type);
 
                 }
@@ -81,12 +81,12 @@ namespace VitalityFunctionsApp.Controllers
             {
                 Dictionary<string, StringValues> queryParams = QueryHelpers.ParseQuery(req.Url.Query);
                 string IsTurnedOn = queryParams["IsTurnedOn"];
-                var pushtokens = new List<PushTokenDTO>();
+                List<PushTokenDTO> pushtokens = new List<PushTokenDTO>();
 
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.OK);
                 try
                 {
-                    var isTurnedOn = bool.Parse(IsTurnedOn);
+                    bool isTurnedOn = bool.Parse(IsTurnedOn);
                     pushtokens = await _pushTokenService.UpdatePushToken(currentUser.FindFirst(ClaimTypes.Sid).Value, isTurnedOn);
                 }
                 catch (Exception)
@@ -118,7 +118,7 @@ namespace VitalityFunctionsApp.Controllers
                 Dictionary<string, StringValues> queryParams = QueryHelpers.ParseQuery(req.Url.Query);
                 int limit = int.Parse(queryParams["limit"]);
                 int offset = int.Parse(queryParams["offset"]);
-                var notifications = new List<NotificationDTO>();
+                List<NotificationDTO> notifications = new List<NotificationDTO>();
 
                 try
                 {

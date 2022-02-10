@@ -43,7 +43,7 @@ namespace Services
                     return null;
 
                 // check to see if the pushtoken already exists
-                var token = await _dbPushToken.GetPushTokensByUserId(userId, type);
+                PushToken token = await _dbPushToken.GetPushTokensByUserId(userId, type);
                 if (token is null)
                 {
                     // if not, create
@@ -66,17 +66,17 @@ namespace Services
                     return null;
 
                 User user = await _dbUser.FindUserById(userId);
-                var notifications = await _dbNotification.GetNotifications(user, limit, offset);
+                List<Notification> notifications = await _dbNotification.GetNotifications(user, limit, offset);
 
                 List<NotificationDTO> list = notifications
                                                     .Select(x =>
                                                     NotificationConversiontHelper.ToDTO(x))
                                                     .ToList();
 
-                foreach (var item in list)
+                foreach (NotificationDTO item in list)
                 {
-                    var senderId = item.UserId;
-                    var sender = await _dbUser.FindUserById(senderId);
+                    string senderId = item.UserId;
+                    User sender = await _dbUser.FindUserById(senderId);
                     // set the fullname and profilepicture of sender
                     item.FullNameSender = $"{sender.Firstname} {sender.Lastname}".Trim();
                     item.ProfilePictureSender = sender.ProfilePicture;
@@ -84,7 +84,7 @@ namespace Services
                     if (item.NotificationType == NotificationTypes.Follow)
                     {
                         // get the followers, filter if any contain the 'ToUser' id.
-                        var userWithFollowers = await _dbUser.FindUserWithFollowers(new User { UserId = sender.UserId } );
+                        User userWithFollowers = await _dbUser.FindUserWithFollowers(new User { UserId = sender.UserId } );
                         if (userWithFollowers.Followers.Any(x => x.UserFollower.Contains(item.ToUser)))
                         {
                             item.IsFollowing = true;
@@ -110,9 +110,9 @@ namespace Services
                 if (!await _dbUser.UserExistsById(userId))
                     return null;
 
-                var tokens = await _dbPushToken.UpdatePushToken(userId, IsTurnedOn);
-                var tokensDTO = tokens.Select(x => NotificationConversiontHelper.ToDTO(x)).ToList();
-                return tokensDTO;
+                List<PushToken> tokens = await _dbPushToken.UpdatePushToken(userId, IsTurnedOn);
+                List<PushTokenDTO> tokenDTOs = tokens.Select(x => NotificationConversiontHelper.ToDTO(x)).ToList();
+                return tokenDTOs;
             }
             catch (Exception ex)
             {
@@ -144,7 +144,7 @@ namespace Services
             // if follow, see if same following values are already in db within 5 minutes.
             if (type == NotificationTypes.Follow)
             {
-                var followAlreadyNotified = await _dbNotification.FindSimilarFollowsWithin5Minutes(toUser, currentUserId);
+                bool followAlreadyNotified = await _dbNotification.FindSimilarFollowsWithin5Minutes(toUser, currentUserId);
                 if (followAlreadyNotified) return;
             }
 
@@ -156,7 +156,7 @@ namespace Services
 
         public async Task SendNotification(string toUserId, string currentUserId, NotificationTypes type, string timelinePostId)
         {
-            var toUser = toUserId;
+            string toUser = toUserId;
 
             //var iOSToken = await _dbPushToken.GetPushTokensByUserId(currentUserId, DeviceType.iOS);
             //var androidToken = await _dbPushToken.GetPushTokensByUserId(currentUserId, DeviceType.Android);
@@ -167,7 +167,7 @@ namespace Services
 
         public async Task AssembleNotification(string toUser, string currentUserId, NotificationTypes type)
         {
-            var notification = new NotificationDTO()
+            NotificationDTO notification = new NotificationDTO()
             {
                 UserId = currentUserId,
                 ToUser = toUser,
@@ -184,7 +184,7 @@ namespace Services
             {
                 List<string> userIds = await _dbUser.GetAllUsers();
 
-                foreach (var toUserId in userIds)
+                foreach (string toUserId in userIds)
                 {
                     await AssembleChallengeNotification(toUserId, currentUserId, type, challengeId);
                 }

@@ -18,9 +18,9 @@ namespace Infrastructure.Logics
 
         public async Task Upload(FileModel model)
         {
-            var blobContainer = _blobServiceClient.GetBlobContainerClient("upload-file");
+            BlobContainerClient blobContainer = _blobServiceClient.GetBlobContainerClient("upload-file");
 
-            var blobClient = blobContainer.GetBlobClient(model.ImageFile.FileName);
+            BlobClient blobClient = blobContainer.GetBlobClient(model.ImageFile.FileName);
 
             await blobClient.UploadAsync(model.ImageFile.OpenReadStream());
         }

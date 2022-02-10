@@ -139,13 +139,13 @@ namespace Services
 
         public static string Base64EncodeObject(RefreshToken token)
         {
-            var plainTextBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(token));
+            byte[] plainTextBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(token));
             return System.Convert.ToBase64String(plainTextBytes);
         }
 
         public static RefreshToken Base64DecodeObject(string base64String)
         {
-            var base64EncodedBytes = System.Convert.FromBase64String(base64String);
+            byte[] base64EncodedBytes = System.Convert.FromBase64String(base64String);
             return JsonConvert.DeserializeObject<RefreshToken>(Encoding.UTF8.GetString(base64EncodedBytes));
         }
 

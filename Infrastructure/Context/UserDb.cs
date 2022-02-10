@@ -87,13 +87,14 @@ namespace Infrastructure.Context
 
             List<User> usersToReturn = new List<User>();
 
-            var users = _dbContext.Users
+            List<User> users = await _dbContext.Users
                                     .AsQueryable()
                                     .Where(u => (u.Firstname + " " + u.Lastname).Contains(name))
                                     .Include(u => u.Followers)
                                     .Include(u => u.SubscribedChallenges)
                                     .Skip(offset)
-                                    .Take(limit);
+                                    .Take(limit)
+                                    .ToListAsync();
 
             Console.ForegroundColor = ConsoleColor.Red;
 

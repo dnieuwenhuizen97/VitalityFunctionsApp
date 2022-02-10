@@ -57,7 +57,7 @@ namespace InhollandVitalityApp.Controllers
                 ChallengeCreationRequest challenge = JsonConvert.DeserializeObject<ChallengeCreationRequest>(await new StreamReader(req.Body).ReadToEndAsync());
                 try
                 {
-                    var result = await _challengeService.CreateChallenge(currentUser.FindFirst(ClaimTypes.Sid).Value, challenge);
+                    ChallengeDTO result = await _challengeService.CreateChallenge(currentUser.FindFirst(ClaimTypes.Sid).Value, challenge);
                     await response.WriteAsJsonAsync(result);
                 }
                 catch (Exception e)
@@ -303,7 +303,7 @@ namespace InhollandVitalityApp.Controllers
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.BadRequest);
                 string currentUserId = currentUser.FindFirst(ClaimTypes.Sid).Value;
 
-                var parsedFromBody = await MultipartFormDataParser.ParseAsync(req.Body);
+                MultipartFormDataParser parsedFromBody = await MultipartFormDataParser.ParseAsync(req.Body);
                 List<StreamContentDTO> files = new List<StreamContentDTO>();
 
                 files.AddRange(parsedFromBody.Files.Select(x =>
@@ -348,7 +348,7 @@ namespace InhollandVitalityApp.Controllers
                 string currentUserId = currentUser.FindFirst(ClaimTypes.Sid).Value;
                 HttpResponseData response = req.CreateResponse(HttpStatusCode.BadRequest);
 
-                var parsedFromBody = await MultipartFormDataParser.ParseAsync(req.Body);
+                MultipartFormDataParser parsedFromBody = await MultipartFormDataParser.ParseAsync(req.Body);
                 List<StreamContentDTO> files = new List<StreamContentDTO>();
 
                 files.AddRange(parsedFromBody.Files.Select(x =>

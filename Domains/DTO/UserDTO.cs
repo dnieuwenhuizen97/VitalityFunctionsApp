@@ -53,7 +53,7 @@ namespace Domains.DTO
     {
         public override IOpenApiExample<UserDTO> Build(NamingStrategy namingStrategy = null)
         {
-            var guid = Guid.NewGuid().ToString();
+            string guid = Guid.NewGuid().ToString();
             Examples.Add(OpenApiExampleResolver.Resolve(
                 "User DTO Example",
                new UserDTO
@@ -83,7 +83,7 @@ namespace Domains.DTO
     {
         public override IOpenApiExample<List<UserDTO>> Build(NamingStrategy namingStrategy = null)
         {
-            var guid = Guid.NewGuid().ToString();
+            string guid = Guid.NewGuid().ToString();
             Examples.Add(OpenApiExampleResolver.Resolve(
                "User DTO Examples",
                 new List<UserDTO> {

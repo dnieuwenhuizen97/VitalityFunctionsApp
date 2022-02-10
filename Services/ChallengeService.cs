@@ -37,9 +37,9 @@ namespace Services
             request.Location = await InputSanitizationService.SanitizeInput(request.Location);
 
             Challenge challenge = ChallengeConversionHelper.RequestToChallenge(request);
-            var challengeNew = await _dbChallenge.CreateChallenge(challenge);
+            Challenge challengeNew = await _dbChallenge.CreateChallenge(challenge);
             await _notificationService.SendNotificationGlobal(userId, NotificationTypes.Global, challengeNew.ChallengeId);
-            var result = ChallengeConversionHelper.ToDTOWithoutProgress(challengeNew);
+            ChallengeDTO result = ChallengeConversionHelper.ToDTOWithoutProgress(challengeNew);
             return result;
         }
         public async Task<ChallengeDTO> GetChallenge(string challengeId, string currentUserId)
@@ -75,7 +75,7 @@ namespace Services
         {
             List<ChallengeDTO> challengeDTOs = new List<ChallengeDTO>();
 
-            var challenges = await _dbChallenge.GetChallengesGroupedBy(type, limit, offset);
+            List<Challenge> challenges = await _dbChallenge.GetChallengesGroupedBy(type, limit, offset);
 
             if (challenges.Count > 0)
             {
@@ -94,7 +94,7 @@ namespace Services
         {
             List<ChallengeDTO> challengeDTOs = new List<ChallengeDTO>();
 
-            var challenges = await _dbChallenge.GetAllChallenges(limit, offset);
+            List<Challenge> challenges = await _dbChallenge.GetAllChallenges(limit, offset);
 
             if (challenges.Count > 0)
             {
@@ -117,7 +117,7 @@ namespace Services
         {
             List<ChallengeDTO> challengeDTOs = new List<ChallengeDTO>();
 
-            var challenges = await _dbChallenge.GetChallengesGroupedBy(type, limit, offset);
+            List<Challenge> challenges = await _dbChallenge.GetChallengesGroupedBy(type, limit, offset);
 
             if (challenges.Count > 0)
             {
@@ -179,7 +179,6 @@ namespace Services
             try
             {
                 await _dbChallenge.RegisterToChallenge(challengeId, currentUserId);
-                //var challengeDTO = ChallengeConversionHelper.ToDTO(challenge);
             }
             catch (Exception ex)
             {

@@ -24,7 +24,7 @@ namespace Services
 
         public async Task<string> GetImage(string imageReferenceName)
         {
-            var result = await _blobStorageDb.GetImage(imageReferenceName);
+            string result = await _blobStorageDb.GetImage(imageReferenceName);
             return result;
         }
 
@@ -35,7 +35,7 @@ namespace Services
 
         public async Task<string> GetVideo(string videoRefrenceName)
         {
-            var result = await _blobStorageDb.GetVideo(videoRefrenceName);
+            string result = await _blobStorageDb.GetVideo(videoRefrenceName);
             return result;
         }
 

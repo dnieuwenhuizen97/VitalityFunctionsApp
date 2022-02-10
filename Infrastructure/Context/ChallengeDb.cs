@@ -75,7 +75,7 @@ namespace Infrastructure.Context
 
             try
             {
-                var challenges = await _dbContext.Challenges
+                List<Challenge> challenges = await _dbContext.Challenges
                                                              .AsQueryable()
                                                              .Where(c => c.ChallengeType == type)
                                                              .OrderBy(c => c.StartDate)

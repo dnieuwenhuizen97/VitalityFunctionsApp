@@ -18,7 +18,7 @@ namespace VitalityTimerTrigger
         [Function(nameof(TokenTimerTrigger))]
         public async Task TokenTimerTrigger([TimerTrigger("0 59 23 * * *")] MyInfo myTimer, FunctionContext context)
         {
-            var logger = context.GetLogger("RecoveryTokenTimerTrigger");
+            ILogger logger = context.GetLogger("RecoveryTokenTimerTrigger");
 
             try
             {

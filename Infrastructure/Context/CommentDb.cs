@@ -24,10 +24,10 @@ namespace Infrastructure.Context
                 limit = 100;
             }
 
-            var results = new List<CommentDTO>();
+            List<CommentDTO> results = new List<CommentDTO>();
             try
             {
-                var comments = await _dbContext.Comments
+                List<Comment> comments = await _dbContext.Comments
                                                       .AsQueryable()
                                                       .Where(x => x.TimelinePost.TimelinePostId == timelinePostId)
                                                       .OrderBy(c => c.Timestamp)

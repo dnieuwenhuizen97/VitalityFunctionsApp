@@ -24,10 +24,10 @@ namespace Infrastructure.Context
                 limit = 100;
             }
 
-            var results = new List<LikeDTO>();
+            List<LikeDTO> results = new List<LikeDTO>();
             try
             {
-                var likersIds = await _dbContext.Likes
+                List<Like> likersIds = await _dbContext.Likes
                                                       .AsQueryable()
                                                       .Where(x => x.TimelinePost.TimelinePostId == timelinePostId)
                                                       .Skip(offset)
@@ -86,7 +86,7 @@ namespace Infrastructure.Context
         {
             try
             {
-                var timelinePostLike = await _dbContext.Likes
+                Like timelinePostLike = await _dbContext.Likes
                                                         .AsQueryable()
                                                         .Where(x => x.TimelinePost.TimelinePostId == timelinePostId)
                                                         .Where(x => x.User.UserId == userId)

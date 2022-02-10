@@ -44,7 +44,7 @@ namespace Services
             {
                 if (request.ImagesAndVideos.Count > 0 || request.ImagesAndVideos is not null)
                 {
-                    var image = request.ImagesAndVideos.FirstOrDefault(x => x.ContentType.Contains("image/"));
+                    StreamContentDTO image = request.ImagesAndVideos.FirstOrDefault(x => x.ContentType.Contains("image/"));
                     if (image is not null && (image.FileName.EndsWith(".jpg") || image.FileName.EndsWith(".png")))
                     {
                         string imageName = $"TimelinePostPic:{timelinePost.TimelinePostId}:{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
@@ -53,7 +53,7 @@ namespace Services
                         await UpdateTimelinePostImage(timelinePost.TimelinePostId, currentUserId, imageName);
                     }
 
-                    var video = request.ImagesAndVideos.FirstOrDefault(x => x.ContentType.Contains("video/"));
+                    StreamContentDTO video = request.ImagesAndVideos.FirstOrDefault(x => x.ContentType.Contains("video/"));
                     if (video is not null && (video.FileName.EndsWith(".mp4") || video.FileName.EndsWith(".mov")))
                     {
                         string videoName = $"TimelinePostVid:{timelinePost.TimelinePostId}:{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}";
@@ -68,7 +68,7 @@ namespace Services
                 throw ex;
             }
 
-            var timelineDTO = TimelineConversionHelper.ToDTO(
+            TimelinePostDTO timelineDTO = TimelineConversionHelper.ToDTO(
                                 timelinePost,
                                 0,
                                 0,
@@ -164,7 +164,7 @@ namespace Services
 
             Comment commentDAL = TimelineConversionHelper.RequestToComment(request, timelinePost, user);
             Comment comment = await _commentDb.PostComment(commentDAL);
-            var commentDTO = TimelineConversionHelper.CommentToDTO(comment);
+            CommentDTO commentDTO = TimelineConversionHelper.CommentToDTO(comment);
 
             await _notificationService.SendNotification(timelinePost.User.UserId, currentUserId, Domains.Enums.NotificationTypes.Comment, timelinePostId);
 
@@ -236,8 +236,8 @@ namespace Services
         public async Task<List<CommentOfUserDTO>> GetCommentsOnPost(string timelinePostId, int limit, int offset)
         {
             // get a list of comments of this post
-            var comments = await _commentDb.GetCommentsOnPost(timelinePostId, limit, offset);
-            var commenters = new List<CommentOfUserDTO>();
+            List<Comment> comments = await _commentDb.GetCommentsOnPost(timelinePostId, limit, offset);
+            List<CommentOfUserDTO> commenters = new List<CommentOfUserDTO>();
 
             // retrieve the firstname, lastname and pf picture of the users
             comments.ForEach(comment =>
