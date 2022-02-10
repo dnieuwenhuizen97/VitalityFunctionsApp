@@ -338,7 +338,7 @@ namespace Infrastructure.Context
         {
             User user = await _dbContext.Users.FindAsync(userId);
 
-            if (user.Firstname == null || user.Lastname == null || user.JobTitle == null || user.Location == null)
+            if (user.Firstname == null && user.Lastname == null && user.JobTitle == null && user.Location == null)
             {
                 return false;
             }
