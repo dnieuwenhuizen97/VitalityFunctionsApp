@@ -7,6 +7,8 @@ namespace Infrastructure.Context
     public class DbContextDomains : DbContext
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<ActivityCategory> ActivityCategories { get; set; }
+        public DbSet<Activity> Activities { get; set; } 
         public DbSet<Challenge> Challenges { get; set; }
         public DbSet<PushToken> PushTokens { get; set; }
         public DbSet<TimelinePost> TimelinePosts { get; set; }
@@ -17,7 +19,7 @@ namespace Infrastructure.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder dbContextOptionsBuilder)
         {
-            dbContextOptionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("SqlServer"));
+            dbContextOptionsBuilder.UseSqlServer("Server=tcp:vitality-app-sql-server.database.windows.net,1433;Initial Catalog=VitalityAppDb-tst;Persist Security Info=False;User ID=vitalityadmin;Password=*H@Y4oU@$TmwC9@OMZo6;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -44,6 +46,19 @@ namespace Infrastructure.Context
                 entity.HasMany(e => e.Comments)
                                             .WithOne(e => e.User)
                                             .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<ActivityCategory>(entity =>
+            {
+                entity.Property(e => e.CategoryId).ValueGeneratedOnAdd();
+                entity.HasMany(e => e.Activities)
+                            .WithOne(e => e.Category)
+                            .OnDelete(DeleteBehavior.NoAction);
+            });
+
+            modelBuilder.Entity<Activity>(entity =>
+            {
+                entity.Property(e => e.ActivityId).ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<Challenge>(entity =>
