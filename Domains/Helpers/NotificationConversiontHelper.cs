@@ -9,7 +9,7 @@ namespace Domains.Helpers
         {
             return new PushTokenDTO
             {
-                UserId = pushToken.UserId,
+                UserId = pushToken.User.UserId,
                 PushTokenId = pushToken.PushTokenId,
                 DeviceType = pushToken.DeviceType,
                 NotificationEnabled = pushToken.NotificationEnabled,

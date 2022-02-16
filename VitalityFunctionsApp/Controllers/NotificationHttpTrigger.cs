@@ -34,9 +34,9 @@ namespace VitalityFunctionsApp.Controllers
 
         [Function(nameof(NotificationHttpTrigger.CreatePushToken))]
         [OpenApiOperation(operationId: "createPushToken", tags: new[] { "notification" }, Summary = "Create a new pushToken for user", Description = "Create a new pushToken for user", Visibility = OpenApiVisibilityType.Important)]
-        [OpenApiParameter(name: "deviceType", In = ParameterLocation.Query, Required = true, Type = typeof(DeviceType), Summary = "The Device we want to create a pushtoken for. [Android, iOS]", Description = "The Device we want to create a pushtoken for. [Android, iOS]", Visibility = OpenApiVisibilityType.Important)]
-        [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(PushToken), Required = true, Description = "The pushToken to send to the devices of a user", Example = typeof(PushTokenExample))]
-        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(PushToken), Summary = "Successful operation", Description = "Successful operation", Example = typeof(PushTokenExample))]
+        [OpenApiParameter(name: "deviceType", In = ParameterLocation.Query, Required = true, Type = typeof(DeviceType), Summary = "The Device to create a pushtoken for. [Android, iOS]", Description = "The Device to create a pushtoken for. [Android, iOS]", Visibility = OpenApiVisibilityType.Important)]
+        [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(PushTokenDTO), Required = true, Description = "The pushToken to send to the devices of a user", Example = typeof(PushTokenExample))]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(PushTokenDTO), Summary = "Successful operation", Description = "Successful operation", Example = typeof(PushTokenExample))]
         [UnauthorizedRequest]
         [ForbiddenRequest]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Summary = "Invalid id supplied", Description = "Invalid id supplied")]
