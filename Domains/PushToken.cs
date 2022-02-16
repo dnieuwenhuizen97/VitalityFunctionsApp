@@ -18,13 +18,17 @@ namespace Domains
         public string PushTokenId { get; set; }
 
         [MaxLength(450)]
+        [OpenApiProperty(Description = "Gets or sets the token")]
+        public string Token { get; set; }
+
+        [MaxLength(450)]
         [OpenApiProperty(Description = "Gets or sets the userId for the PushToken")]
-        public string UserId { get; set; }
+        public virtual User User { get; set; }
 
         [OpenApiProperty(Description = "Gets or sets the type of the Device. [Android or iOS]")]
         public DeviceType DeviceType { get; set; }
 
-        [OpenApiProperty(Description = "Gets or sets if the user wants to recieve notifications")]
+        [OpenApiProperty(Description = "Gets or sets if the user wants to receive notifications")]
         public bool NotificationEnabled { get; set; }
 
         public PushToken()
@@ -41,7 +45,7 @@ namespace Domains
                 "PushTokenExample",
                 new PushToken()
                 {
-                    UserId = Guid.NewGuid().ToString(),
+                    User = new User(),
                     PushTokenId = Guid.NewGuid().ToString(),
                     DeviceType = DeviceType.Android,
                     NotificationEnabled = true

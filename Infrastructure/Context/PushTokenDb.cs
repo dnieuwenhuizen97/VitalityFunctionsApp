@@ -26,7 +26,7 @@ namespace Infrastructure.Context
             {
                 PushToken pushtokens = await _dbContext.PushTokens
                                                             .AsQueryable()
-                                                            .Where(x => x.UserId == userId)
+                                                            .Where(x => x.User.UserId == userId)
                                                             .Where(x => x.DeviceType == type)
                                                             .FirstOrDefaultAsync();
 
@@ -38,11 +38,11 @@ namespace Infrastructure.Context
             }
         }
 
-        public async Task<PushToken> CreatePushToken(string userId, DeviceType type)
+        public async Task<PushToken> CreatePushToken(User user, DeviceType type)
         {
             PushToken pushToken = new PushToken()
             {
-                UserId = userId,
+                User = user,
                 DeviceType = type,
                 NotificationEnabled = true
             };
@@ -66,7 +66,7 @@ namespace Infrastructure.Context
             {
                 List<PushToken> pushTokens = await _dbContext.PushTokens
                                                             .AsQueryable()
-                                                            .Where(x => x.UserId == userId)
+                                                            .Where(x => x.User.UserId == userId)
                                                             .ToListAsync();
 
                 if (pushTokens is null || !pushTokens.Any()) throw new DbUpdateException();

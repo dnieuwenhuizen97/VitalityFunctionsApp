@@ -46,6 +46,9 @@ namespace Infrastructure.Context
                 entity.HasMany(e => e.Comments)
                                             .WithOne(e => e.User)
                                             .OnDelete(DeleteBehavior.Cascade);
+                entity.HasMany(e => e.PushTokens)
+                                            .WithOne(e => e.User)
+                                            .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<ActivityCategory>(entity =>

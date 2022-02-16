@@ -24,81 +24,28 @@ namespace UnitTests.Services
         }
 
         [Fact]
-        public async Task Create_Push_Token_Should_Return_Push_Token_DTO_Object()
-        {
-            // Arrange
-            string userId = Guid.NewGuid().ToString();
-            DeviceType deviceType = DeviceType.Android;
-
-            PushToken testPushToken = null;
-
-            PushToken pushTokenDAL = new PushToken();
-
-            _userDbMock.Setup(x => x.UserExistsById(userId))
-                .Returns(Task.FromResult(true));
-            _pushTokenDbMock.Setup(x => x.GetPushTokensByUserId(userId, deviceType))
-                .Returns(Task.FromResult(testPushToken));
-            _pushTokenDbMock.Setup(x => x.CreatePushToken(userId, deviceType))
-                .Returns(Task.FromResult(pushTokenDAL));
-
-            // Act
-            PushTokenDTO pushToken = await _notificationService.CreatePushToken(userId, deviceType);
-
-            // Assert
-            Assert.NotNull(pushToken);
-        }
-
-        [Fact]
         public async Task Create_Push_Token_Should_Return_Null_When_User_Not_Exist()
         {
             // Arrange
-            string userId = Guid.NewGuid().ToString();
+            User user = new User();
             DeviceType deviceType = DeviceType.Android;
 
             PushToken testPushToken = null;
 
             PushToken pushTokenDAL = new PushToken();
 
-            _userDbMock.Setup(x => x.UserExistsById(userId))
+            _userDbMock.Setup(x => x.UserExistsById(user.UserId))
                 .ReturnsAsync(false);
-            _pushTokenDbMock.Setup(x => x.GetPushTokensByUserId(userId, deviceType))
+            _pushTokenDbMock.Setup(x => x.GetPushTokensByUserId(user.UserId, deviceType))
                 .ReturnsAsync(testPushToken);
-            _pushTokenDbMock.Setup(x => x.CreatePushToken(userId, deviceType))
+            _pushTokenDbMock.Setup(x => x.CreatePushToken(user, deviceType))
                 .ReturnsAsync(pushTokenDAL);
 
             // Act
-            PushTokenDTO pushToken = await _notificationService.CreatePushToken(userId, deviceType);
+            PushTokenDTO pushToken = await _notificationService.CreatePushToken(user.UserId, deviceType);
 
             // Assert
             Assert.Null(pushToken);
-        }
-
-        [Fact]
-        public async Task Update_Push_Token_Should_Return_List_Of_Push_Token_DTO_Objects()
-        {
-            // Arrange
-            string userId = Guid.NewGuid().ToString();
-            bool isTurnedOn = true;
-
-            List<PushToken> testPushTokens = new List<PushToken>()
-            {
-                new PushToken(),
-                new PushToken(),
-                new PushToken(),
-                new PushToken(),
-            };
-
-            _userDbMock.Setup(x => x.UserExistsById(userId))
-                .Returns(Task.FromResult(true));
-            _pushTokenDbMock.Setup(x => x.UpdatePushToken(userId, isTurnedOn))
-                .Returns(Task.FromResult(testPushTokens));
-
-            // Act
-            List<PushTokenDTO> pushTokens = await _notificationService.UpdatePushToken(userId, isTurnedOn);
-
-            // Assert
-            Assert.NotNull(pushTokens);
-            Assert.True(pushTokens.Count == 4);
         }
 
         [Fact]

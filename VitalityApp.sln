@@ -18,10 +18,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailQueueTrigger", "EmailQueueTrigger\EmailQueueTrigger.csproj", "{14C3790D-71C0-4173-BC45-D74AAFC6B1DF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{72750DEC-E436-44EE-AA49-A5EE4D60E9CE}"
+	ProjectSection(SolutionItems) = preProject
+		Services\QueueStorageService.cs = Services\QueueStorageService.cs
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{92BC3936-D5A7-4E30-AFB1-8972C38504FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VitalityTimerTrigger", "VitalityTimerTrigger\VitalityTimerTrigger.csproj", "{752CE03A-1DD2-4278-B756-A51F549CE62D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VitalityTimerTrigger", "VitalityTimerTrigger\VitalityTimerTrigger.csproj", "{752CE03A-1DD2-4278-B756-A51F549CE62D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

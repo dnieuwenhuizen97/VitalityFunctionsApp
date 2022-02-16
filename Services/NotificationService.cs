@@ -46,8 +46,8 @@ namespace Services
                 PushToken token = await _dbPushToken.GetPushTokensByUserId(userId, type);
                 if (token is null)
                 {
-                    // if not, create
-                    token = await _dbPushToken.CreatePushToken(userId, type);
+                    User user = await _dbUser.FindUserById(userId);
+                    token = await _dbPushToken.CreatePushToken(user, type);
                 }
 
                 return NotificationConversiontHelper.ToDTO(token);
