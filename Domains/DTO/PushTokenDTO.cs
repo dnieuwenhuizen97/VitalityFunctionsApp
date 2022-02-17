@@ -14,13 +14,10 @@ namespace Domains.DTO
         public string UserId { get; set; }
 
         [OpenApiProperty(Description = "Gets or sets the pushtoken id for the pushtoken dto")]
-        public string PushTokenId { get; set; }
+        public string PushToken { get; set; }
 
         [OpenApiProperty(Description = "Gets or sets the device type for the pushtoken dto")]
         public DeviceType DeviceType { get; set; }
-
-        [OpenApiProperty(Description = "Gets or sets if notifications are enabled for the pushtoken dto")]
-        public bool NotificationEnabled { get; set; }
 
         public PushTokenDTO()
         {
@@ -36,9 +33,8 @@ namespace Domains.DTO
                 "Push Token DTO Example",
                 new PushTokenDTO { 
                     UserId = Guid.NewGuid().ToString(),
-                    PushTokenId = Guid.NewGuid().ToString(),
-                    DeviceType = DeviceType.iOS,
-                    NotificationEnabled = true
+                    PushToken = Guid.NewGuid().ToString(),
+                    DeviceType = DeviceType.iOS
                 }));
             return this;
         }

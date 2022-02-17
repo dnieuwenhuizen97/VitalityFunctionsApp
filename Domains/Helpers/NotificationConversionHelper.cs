@@ -2,17 +2,27 @@
 
 namespace Domains.Helpers
 {
-    public static class NotificationConversiontHelper
+    public static class NotificationConversionHelper
     {
 
-        public static PushTokenDTO ToDTO(PushToken pushToken)
+        public static PushTokenDTO PushTokenToDTO(PushToken pushToken)
         {
             return new PushTokenDTO
             {
                 UserId = pushToken.User.UserId,
-                PushTokenId = pushToken.PushTokenId,
-                DeviceType = pushToken.DeviceType,
-                NotificationEnabled = pushToken.NotificationEnabled,
+                PushToken = pushToken.Token,
+                DeviceType = pushToken.DeviceType
+            };
+        }
+
+        public static PushToken RequestToPushToken(PushTokenCreationRequest request, User user)
+        {
+            return new PushToken
+            {
+                Token = request.PushToken,
+                DeviceType = request.DeviceType,
+                User = user,
+                NotificationEnabled = true
             };
         }
 
