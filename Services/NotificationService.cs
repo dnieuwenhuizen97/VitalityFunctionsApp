@@ -2,11 +2,15 @@
 using Domains.DTO;
 using Domains.Enums;
 using Domains.Helpers;
+using FirebaseAdmin;
+using FirebaseAdmin.Messaging;
+using Google.Apis.Auth.OAuth2;
 using Infrastructure.Context;
 using Infrastructure.Context.Interfaces;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -30,32 +34,9 @@ namespace Services
         public async Task CreateNotification(NotificationDTO notificationDTO)
         {
             User toUser = await _dbUser.FindUserById(notificationDTO.ToUser);
-            Notification notification = NotificationConversiontHelper.ToNotification(notificationDTO, toUser);
+            Domains.Notification notification = NotificationConversionHelper.ToNotification(notificationDTO, toUser);
 
             await _dbNotification.CreateNotification(notification);
-        }
-
-        public async Task<PushTokenDTO> CreatePushToken(string userId, DeviceType type)
-        {
-            try
-            {
-                if (!await _dbUser.UserExistsById(userId))
-                    return null;
-
-                // check to see if the pushtoken already exists
-                PushToken token = await _dbPushToken.GetPushTokensByUserId(userId, type);
-                if (token is null)
-                {
-                    User user = await _dbUser.FindUserById(userId);
-                    token = await _dbPushToken.CreatePushToken(user, type);
-                }
-
-                return NotificationConversiontHelper.ToDTO(token);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
         }
 
         public async Task<List<NotificationDTO>> GetNotifications(string userId, int limit, int offset)
@@ -66,11 +47,11 @@ namespace Services
                     return null;
 
                 User user = await _dbUser.FindUserById(userId);
-                List<Notification> notifications = await _dbNotification.GetNotifications(user, limit, offset);
+                List<Domains.Notification> notifications = await _dbNotification.GetNotifications(user, limit, offset);
 
                 List<NotificationDTO> list = notifications
                                                     .Select(x =>
-                                                    NotificationConversiontHelper.ToDTO(x))
+                                                    NotificationConversionHelper.ToDTO(x))
                                                     .ToList();
 
                 foreach (NotificationDTO item in list)
@@ -96,23 +77,6 @@ namespace Services
                 }
 
                 return list;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<List<PushTokenDTO>> UpdatePushToken(string userId, bool IsTurnedOn)
-        {
-            try
-            {
-                if (!await _dbUser.UserExistsById(userId))
-                    return null;
-
-                List<PushToken> tokens = await _dbPushToken.UpdatePushToken(userId, IsTurnedOn);
-                List<PushTokenDTO> tokenDTOs = tokens.Select(x => NotificationConversiontHelper.ToDTO(x)).ToList();
-                return tokenDTOs;
             }
             catch (Exception ex)
             {
@@ -220,6 +184,49 @@ namespace Services
                 challengeId = challengeId
             };
             await CreateNotification(notification);
+        }
+
+        public async Task<PushTokenDTO> CreatePushToken(PushTokenCreationRequest request, string userId)
+        {
+            User user = await _dbUser.FindUserById(userId);
+            PushToken pushToken = NotificationConversionHelper.RequestToPushToken(request, user);
+
+            PushToken result = await _dbPushToken.SavePushToken(pushToken);
+
+            return NotificationConversionHelper.PushTokenToDTO(result);
+        }
+
+        public async Task<PushTokenDTO> GetPushToken(string token, string userId)
+        {
+            PushToken pushToken = await _dbPushToken.GetPushToken(token);
+
+            if (pushToken.User.UserId != userId)
+                throw new Exception("Requested push token does not belong to the current user");
+
+            return NotificationConversionHelper.PushTokenToDTO(pushToken);
+        }
+
+        public async Task SendPushNotification(string pushToken)
+        {
+            if (FirebaseApp.DefaultInstance == null)
+            {
+                FirebaseApp.Create(new AppOptions()
+                {
+                    Credential = GoogleCredential.FromJson(Environment.GetEnvironmentVariable("FireBaseSettings"))
+                });
+            }
+
+            Message message = new Message()
+            {
+                Token = pushToken,
+                Notification = new FirebaseAdmin.Messaging.Notification()
+                {
+                    Title = "Test Notification",
+                    Body = "Did you receive this??"
+                }
+            };
+
+           await FirebaseMessaging.DefaultInstance.SendAsync(message);
         }
     }
 }

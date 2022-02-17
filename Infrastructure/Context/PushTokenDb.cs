@@ -20,90 +20,40 @@ namespace Infrastructure.Context
 
         public PushTokenDb() { }
 
-        public async Task<PushToken> GetPushTokensByUserId(string userId, DeviceType type)
+        public async Task<PushToken> SavePushToken(PushToken token)
         {
-            try
-            {
-                PushToken pushtokens = await _dbContext.PushTokens
-                                                            .AsQueryable()
-                                                            .Where(x => x.User.UserId == userId)
-                                                            .Where(x => x.DeviceType == type)
-                                                            .FirstOrDefaultAsync();
+            if (await PushTokenExists(token.Token))
+                throw new Exception("Token already exists");
 
-                return pushtokens;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            await _dbContext.AddAsync(token);
+            await _dbContext.SaveChangesAsync();
+
+            return token;
         }
 
-        public async Task<PushToken> CreatePushToken(User user, DeviceType type)
+        public async Task<PushToken> GetPushToken(string token)
         {
-            PushToken pushToken = new PushToken()
-            {
-                User = user,
-                DeviceType = type,
-                NotificationEnabled = true
-            };
+            PushToken pushToken = await _dbContext.PushTokens
+                                                        .AsQueryable()
+                                                        .FirstAsync(x => x.Token == token);
 
-            try
-            {
-                await _dbContext.PushTokens.AddAsync(pushToken);
-                await _dbContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            if (pushToken == null)
+                throw new KeyNotFoundException("Token not found");
 
             return pushToken;
-        }
-
-        public async Task<List<PushToken>> UpdatePushToken(string userId, bool IsTurnedOn)
-        {
-            try
-            {
-                List<PushToken> pushTokens = await _dbContext.PushTokens
-                                                            .AsQueryable()
-                                                            .Where(x => x.User.UserId == userId)
-                                                            .ToListAsync();
-
-                if (pushTokens is null || !pushTokens.Any()) throw new DbUpdateException();
-
-                pushTokens.ForEach(x => x.NotificationEnabled = IsTurnedOn);
-                await _dbContext.SaveChangesAsync();
-
-                return pushTokens;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
         }
 
         public async Task DeletePushToken(User user, string pushTokenId)
         {
             try
             {
-                // When a pushtoken is delete, first delete the notifications that belong to it.
-                List<Notification> notifications = await _dbContext.Notifications
-                                                                  .AsQueryable()
-                                                                  .Where(x => x.ToUser == user)
-                                                                  .ToListAsync();
-
-                if (notifications is not null || !notifications.Any())
-                {
-                    _dbContext.Notifications.RemoveRange(notifications);
-                }
-
-
                 PushToken token = await _dbContext.PushTokens
                                                         .AsQueryable()
                                                         .Where(x => x.PushTokenId == pushTokenId)
                                                         .FirstOrDefaultAsync();
 
-                if (token is null) throw new DbUpdateException();
+                if (token is null)
+                    throw new DbUpdateException();
 
                 _dbContext.PushTokens.Remove(token);
                 await _dbContext.SaveChangesAsync();
@@ -112,6 +62,13 @@ namespace Infrastructure.Context
             {
                 throw;
             }
+        }
+
+        private async Task<bool> PushTokenExists(string token)
+        {
+            return await _dbContext.PushTokens
+                                .AsQueryable()
+                                .AnyAsync(x => x.Token == token);
         }
     }
 }

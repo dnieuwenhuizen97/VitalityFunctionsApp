@@ -117,8 +117,6 @@ namespace VitalityFunctionsApp.Controllers
                 response = req.CreateResponse(HttpStatusCode.BadRequest);
             }
 
-
-
             return response;
         }
 
